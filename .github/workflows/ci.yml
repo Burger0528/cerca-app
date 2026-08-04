@@ -1,0 +1,29 @@
+name: ci
+
+# Es el MISMO verify.sh que corre en pre-push. Si CI y el portátil no coinciden, el bug
+# está en el script, no en el PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: ./scripts/verify.sh

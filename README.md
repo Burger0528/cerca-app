@@ -1,0 +1,78 @@
+# Cerca · app móvil
+
+Monorepo del sprint 1. El enunciado completo está en [docs/sprint-1.md](docs/sprint-1.md)
+(y el PDF original en [docs/sprint-1.pdf](docs/sprint-1.pdf)).
+
+```
+cerca-app/
+├── apps/mobile          Expo SDK 57, development build. La app.
+├── packages/contract    @cerca/contract. Lo que comparte el backend.
+├── scripts/verify.sh    La única puerta a main. Lo mismo que corre en CI.
+└── docs/                El enunciado del sprint.
+```
+
+## Arrancar
+
+```bash
+npm install
+cp apps/mobile/.env.example apps/mobile/.env.local   # y pon la IP de tu backend
+
+# Development build, NO Expo Go: a partir del día 2 hay código nativo de terceros
+# (expo-secure-store, expo-location) que Expo Go no trae compilado.
+npm run -w mobile ios       # o :android — compila e instala la dev build
+npm run mobile              # el servidor de Metro, para el día a día
+```
+
+`expo run:ios` / `expo run:android` generan las carpetas `ios/` y `android/` la primera
+vez. Están en `.gitignore` a propósito: se regeneran desde `app.json` con
+`npm run -w mobile prebuild`, y versionarlas es la forma más rápida de que los dos
+tengamos configuraciones nativas distintas sin saberlo.
+
+## Verificar
+
+```bash
+./scripts/verify.sh    # format + lint + typecheck + test + auditoría de EXPO_PUBLIC_
+```
+
+Es lo que corre en `pre-push` y en CI, el mismo archivo. Ahora mismo tarda ~6 s, con
+presupuesto de 60. `pre-commit` solo pasa lint-staged sobre lo tocado.
+
+Nada entra a `main` sin esto en verde.
+
+## La arquitectura, en cuatro líneas
+
+```
+src/app            rutas de expo-router + composition root. Ve todo.
+src/presentation   React. Ve domain y application. NO ve infrastructure.
+src/infrastructure fetch, Keychain, GPS. Ve domain y application.
+src/application    casos de uso. Solo ve domain.
+src/domain         entidades y puertos. No ve nada. Ni React.
+```
+
+No es una convención de buena voluntad: está en
+[`eslint.config.mjs`](eslint.config.mjs) como `import/no-restricted-paths`. Un import que
+apunte hacia fuera hace fallar el lint y el PR no entra. Se comprueba así:
+
+```bash
+echo "import { View } from 'react-native';" > apps/mobile/src/domain/probe.ts
+npx eslint apps/mobile/src/domain/probe.ts   # falla, como debe
+rm apps/mobile/src/domain/probe.ts
+```
+
+`presentation` no puede tocar `infrastructure` porque recibe los puertos ya construidos
+desde `src/app/_layout.tsx`, que es el único sitio donde se decide que el almacén seguro
+es expo-secure-store. Eso es lo que permite montar una pantalla en un test con gateways
+falsos sin tocar nada más.
+
+## Convenciones
+
+- **El código, en inglés**: identificadores, archivos, ramas, commits, tests y claves de
+  i18n. Los comentarios y la documentación van en castellano, que es como hablamos.
+- **El texto que ve el usuario vive en `en.json` y `es.json`.** Ni una cadena suelta en un
+  componente.
+- **Ni un `as`.** El tipo lo demuestra el `parse` de un schema de `@cerca/contract`, no lo
+  afirma una aserción. La regla está en el linter; `as const` sí está permitido.
+- **El hexadecimal solo vive en `tailwind.config.js`.** En los componentes, colores
+  semánticos: `bg-surface`, `text-status-removed`.
+- **`main` protegida**, sin push directo.
+- Si no lo puedes explicar línea a línea, no lo entregas.

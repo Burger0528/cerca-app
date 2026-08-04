@@ -1,0 +1,60 @@
+{
+  "common": {
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "loading": "Loading…"
+  },
+  "session": {
+    "restoring": "Restoring your session…",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "toSignUp": "Create an account"
+    },
+    "signUp": {
+      "title": "Create an account",
+      "submit": "Create account",
+      "toSignIn": "I already have an account"
+    }
+  },
+  "search": {
+    "title": "Near you",
+    "placeholder": "What do you need? Plumber, electrician…"
+  },
+  "location": {
+    "title": "Where should we search from?",
+    "chooseCity": "Choose a city",
+    "cityPickerTitle": "Choose your city",
+    "useMyLocation": "Use my location",
+    "openSettings": "Open Settings",
+    "blocked": {
+      "permission-undetermined": "With your location we can sort services by distance.",
+      "permission-denied": "We don't have location permission. Pick your city or enable it in Settings.",
+      "services-disabled": "Location is switched off on this phone. Turn it on or pick your city.",
+      "position-unavailable": "We couldn't locate you. Try again or pick your city."
+    }
+  },
+  "errors": {
+    "network": "You're offline. Check your connection and try again.",
+    "timeout": "This is taking too long. Try again.",
+    "server": "Something broke on our side. Try again in a moment.",
+    "contract": "We got a response we don't understand. We're on it.",
+    "unknown": "Something went wrong."
+  },
+  "validation": {
+    "email": {
+      "invalid": "Enter a valid email address."
+    },
+    "password": {
+      "required": "Enter your password.",
+      "tooShort": "At least 8 characters."
+    },
+    "displayName": {
+      "required": "Enter your name."
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "common": {
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "loading": "Cargando…"
+  },
+  "session": {
+    "restoring": "Recuperando tu sesión…",
+    "signOut": "Cerrar sesión"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Entrar",
+      "submit": "Entrar",
+      "toSignUp": "Crear cuenta"
+    },
+    "signUp": {
+      "title": "Crear cuenta",
+      "submit": "Crear cuenta",
+      "toSignIn": "Ya tengo cuenta"
+    }
+  },
+  "search": {
+    "title": "Cerca de ti",
+    "placeholder": "¿Qué necesitas? Fontanero, electricista…"
+  },
+  "location": {
+    "title": "¿Desde dónde buscamos?",
+    "chooseCity": "Elegir ciudad",
+    "cityPickerTitle": "Elige tu ciudad",
+    "useMyLocation": "Usar mi ubicación",
+    "openSettings": "Abrir Ajustes",
+    "blocked": {
+      "permission-undetermined": "Con tu ubicación podemos ordenar los servicios por distancia.",
+      "permission-denied": "No tenemos permiso de ubicación. Elige tu ciudad o actívalo en Ajustes.",
+      "services-disabled": "La ubicación del teléfono está apagada. Enciéndela o elige tu ciudad.",
+      "position-unavailable": "No hemos podido situarte. Inténtalo otra vez o elige tu ciudad."
+    }
+  },
+  "errors": {
+    "network": "No hay conexión. Comprueba tu red e inténtalo otra vez.",
+    "timeout": "Está tardando demasiado. Inténtalo otra vez.",
+    "server": "Algo se ha roto de nuestro lado. Inténtalo en un momento.",
+    "contract": "Hemos recibido una respuesta que no entendemos. Ya lo estamos mirando.",
+    "unknown": "Algo ha salido mal."
+  },
+  "validation": {
+    "email": {
+      "invalid": "Escribe un correo válido."
+    },
+    "password": {
+      "required": "Escribe tu contraseña.",
+      "tooShort": "Mínimo 8 caracteres."
+    },
+    "displayName": {
+      "required": "Escribe tu nombre."
+    }
+  }
+}

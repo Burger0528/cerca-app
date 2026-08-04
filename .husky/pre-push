@@ -1,0 +1,2 @@
+# Presupuesto: menos de 60 s. Lo mismo que corre en CI.
+./scripts/verify.sh

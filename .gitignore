@@ -1,0 +1,45 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# generated native folders
+apps/mobile/ios/
+apps/mobile/android/
+
+# native artefacts
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# build output
+build/
+*.tsbuildinfo
+
+# env — .env.example SÍ se versiona, el resto no
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# tooling caches
+.eslintcache
+coverage/
+
+# macOS
+.DS_Store
+*.pem

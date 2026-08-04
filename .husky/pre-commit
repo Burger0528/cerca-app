@@ -1,0 +1,2 @@
+# Presupuesto: menos de 5 s. Solo lo tocado, nada de correr el repo entero.
+npx lint-staged
