@@ -20,6 +20,7 @@ interface SessionContextValue {
   readonly state: SessionState;
   signIn(credentials: SignInRequest): Promise<void>;
   signUp(request: SignUpRequest): Promise<void>;
+  becomeProvider(): Promise<void>;
   signOut(): Promise<void>;
 }
 
@@ -100,6 +101,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [dependencies],
   );
 
+  const becomeProvider = useCallback(async () => {
+    setState(await sessionUseCases.becomeProvider(dependencies));
+  }, [dependencies]);
+
   const signOut = useCallback(async () => {
     setState(await sessionUseCases.signOut(dependencies));
     // La caché se tira ENTERA al salir. Sin esto, el siguiente que inicie sesión en este
@@ -108,8 +113,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [dependencies, queryClient]);
 
   const value = useMemo<SessionContextValue>(
-    () => ({ state, signIn, signUp, signOut }),
-    [state, signIn, signUp, signOut],
+    () => ({ state, signIn, signUp, becomeProvider, signOut }),
+    [state, signIn, signUp, becomeProvider, signOut],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

@@ -39,7 +39,36 @@
       "sessionExpired": "Tu sesión ha caducado. Vuelve a entrar."
     }
   },
+  "account": {
+    "tabTitle": "Cuenta",
+    "title": "Tu cuenta",
+    "becomeProvider": {
+      "title": "Ofrece tus servicios",
+      "body": "Publica anuncios y recibe reservas. Conservas todo lo que ya tienes.",
+      "action": "Hazte proveedor",
+      "submitting": "Preparándolo…"
+    }
+  },
+  "provider": {
+    "tabTitle": "Mis anuncios",
+    "myListings": {
+      "title": "Mis anuncios",
+      "empty": {
+        "title": "Todavía no has publicado nada",
+        "body": "Tus anuncios aparecerán aquí en cuanto crees el primero."
+      },
+      "action": {
+        "publish": "Publicar",
+        "pause": "Pausar"
+      },
+      "locked": {
+        "under_review": "En revisión. No puedes cambiarlo mientras lo miramos.",
+        "removed": "Retirado por moderación. No se puede volver a publicar."
+      }
+    }
+  },
   "search": {
+    "tabTitle": "Buscar",
     "title": "Cerca de ti",
     "placeholder": "¿Qué necesitas? Fontanero, electricista…",
     "resultCount_one": "{{count}} resultado",

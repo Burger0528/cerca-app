@@ -26,6 +26,8 @@ export const listingKeys = {
 
   details: () => [...listingKeys.all, 'detail'] as const,
   detail: (listingId: string) => [...listingKeys.details(), listingId] as const,
+
+  mine: () => [...listingKeys.all, 'mine'] as const,
 } as const;
 
 export const categoryKeys = {

@@ -21,6 +21,7 @@ export interface AuthGatewayPort {
   signUp(request: SignUpRequest): Promise<StoredSession>;
   /** GET /me con el token que lleve puesto el cliente HTTP. */
   me(signal?: AbortSignal): Promise<Actor>;
+  becomeProvider(): Promise<Actor>;
   signOut(refreshToken: string): Promise<void>;
 }
 

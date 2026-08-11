@@ -1,4 +1,11 @@
-import type { Category, CursorPage, Listing, ListingSearchFilters } from '@cerca/contract';
+import type {
+  Category,
+  CursorPage,
+  Listing,
+  ListingSearchFilters,
+  ListingStatusAction,
+  MyListing,
+} from '@cerca/contract';
 
 import type { Coordinates } from '../geo/coordinates';
 
@@ -15,6 +22,8 @@ export interface ListingSearchQuery {
 
 export interface ListingGatewayPort {
   search(query: ListingSearchQuery, signal?: AbortSignal): Promise<CursorPage<Listing>>;
+  listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>>;
+  setStatus(listingId: string, action: ListingStatusAction): Promise<void>;
 }
 
 export interface CategoryGatewayPort {

@@ -5,6 +5,7 @@
  * ubicación es expo-location. Cambiar cualquiera de las dos cosas se hace aquí y en ningún
  * sitio más: ni `application` ni `presentation` nombran nunca a Expo.
  */
+import { randomUUID } from 'expo-crypto';
 import { Platform } from 'react-native';
 
 import type { Services } from '../domain/services';
@@ -64,5 +65,6 @@ export function createServices(options: CreateServicesOptions = {}): Services {
     categoryGateway: createHttpCategoryGateway(http),
     location: createExpoLocationAdapter(),
     now,
+    newIdempotencyKey: randomUUID,
   };
 }
