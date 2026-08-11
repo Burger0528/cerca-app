@@ -29,9 +29,12 @@ function fetchMock(
   return jest.fn(implementation);
 }
 
+function headersOf(mock: FetchMock, callIndex: number): Record<string, string> | undefined {
+  return mock.mock.calls[callIndex]?.[1].headers as Record<string, string> | undefined;
+}
+
 function authHeaderOf(mock: FetchMock, callIndex: number): string | undefined {
-  const headers = mock.mock.calls[callIndex]?.[1].headers as Record<string, string> | undefined;
-  return headers?.Authorization;
+  return headersOf(mock, callIndex)?.Authorization;
 }
 
 function clientWith(
@@ -174,6 +177,42 @@ describe('createHttpClient', () => {
     ).rejects.toBeInstanceOf(HttpError);
 
     expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('sends the idempotency key when the caller provides one', async () => {
+    const fetchImpl = fetchMock(async () => jsonResponse({ id: '1', title: 'ok' }));
+
+    await clientWith(fetchImpl).request(
+      { path: '/bookings', method: 'POST', body: {}, idempotencyKey: 'key-1' },
+      bodySchema,
+    );
+
+    expect(headersOf(fetchImpl, 0)?.['Idempotency-Key']).toBe('key-1');
+  });
+
+  it('omits the idempotency header when there is no key', async () => {
+    const fetchImpl = fetchMock(async () => jsonResponse({ id: '1', title: 'ok' }));
+
+    await clientWith(fetchImpl).request({ path: '/listings' }, bodySchema);
+
+    expect(headersOf(fetchImpl, 0)).not.toHaveProperty('Idempotency-Key');
+  });
+
+  it('replays the same idempotency key after a refresh, so the retry is not a second write', async () => {
+    let calls = 0;
+    const fetchImpl = fetchMock(async () => {
+      calls += 1;
+      return calls === 1
+        ? new Response('', { status: 401 })
+        : jsonResponse({ id: '1', title: 'ok' });
+    });
+
+    await clientWith(fetchImpl, { refreshAccessToken: async () => 'token-2' }).request(
+      { path: '/bookings', method: 'POST', body: {}, idempotencyKey: 'key-1' },
+      bodySchema,
+    );
+
+    expect(headersOf(fetchImpl, 1)?.['Idempotency-Key']).toBe('key-1');
   });
 
   it('does not even try to refresh when there is no session to refresh', async () => {

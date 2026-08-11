@@ -57,6 +57,15 @@ export async function signUp(
   return signedIn(session.actor);
 }
 
+export async function becomeProvider(deps: SessionDependencies): Promise<SessionState> {
+  const actor = await deps.authGateway.becomeProvider();
+  const stored = await deps.sessionManager.restore();
+
+  if (stored !== null) await deps.sessionManager.adopt({ ...stored, actor });
+
+  return signedIn(actor);
+}
+
 /**
  * Cerrar sesión SIEMPRE deja al usuario fuera, aunque el servidor no conteste.
  *

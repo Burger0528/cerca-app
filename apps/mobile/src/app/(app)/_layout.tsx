@@ -1,5 +1,7 @@
-import { Redirect, Stack } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
+import { useHasCapacity } from '../../presentation/auth/use-can';
 import { useSession } from '../../presentation/providers/session-provider';
 
 /**
@@ -15,10 +17,21 @@ import { useSession } from '../../presentation/providers/session-provider';
  */
 export default function AppLayout() {
   const { state } = useSession();
+  const { t } = useTranslation();
+  const isProvider = useHasCapacity('provider');
 
   if (state.status !== 'signed-in') {
     return <Redirect href="/sign-in" />;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Tabs screenOptions={{ headerShown: false }}>
+      <Tabs.Screen name="index" options={{ title: t('search.tabTitle') }} />
+      <Tabs.Screen
+        name="(provider)"
+        options={{ title: t('provider.tabTitle'), href: isProvider ? undefined : null }}
+      />
+      <Tabs.Screen name="account" options={{ title: t('account.tabTitle') }} />
+    </Tabs>
+  );
 }

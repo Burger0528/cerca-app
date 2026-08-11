@@ -1,5 +1,11 @@
-import { categorySchema, cursorPageSchema, listingSchema } from '@cerca/contract';
-import type { Category, CursorPage, Listing } from '@cerca/contract';
+import { categorySchema, cursorPageSchema, listingSchema, myListingSchema } from '@cerca/contract';
+import type {
+  Category,
+  CursorPage,
+  Listing,
+  ListingStatusAction,
+  MyListing,
+} from '@cerca/contract';
 import { z } from 'zod';
 
 import type {
@@ -16,6 +22,7 @@ import type { HttpClient, QueryValue } from '../http/http-client';
  * recompilarlo cientos de veces mientras la lista corre, que es justo cuando no sobra CPU.
  */
 const listingPageSchema = cursorPageSchema(listingSchema);
+const myListingPageSchema = cursorPageSchema(myListingSchema);
 const categoryListSchema = z.array(categorySchema);
 
 export function createHttpListingGateway(http: HttpClient): ListingGatewayPort {
@@ -25,6 +32,14 @@ export function createHttpListingGateway(http: HttpClient): ListingGatewayPort {
         { path: '/listings', query: toQueryString(query), signal },
         listingPageSchema,
       );
+    },
+
+    listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>> {
+      return http.request({ path: '/me/listings', query: { cursor }, signal }, myListingPageSchema);
+    },
+
+    setStatus(listingId: string, action: ListingStatusAction): Promise<void> {
+      return http.requestVoid({ path: `/listings/${listingId}/${action}`, method: 'POST' });
     },
   };
 }

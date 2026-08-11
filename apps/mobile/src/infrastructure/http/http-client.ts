@@ -29,6 +29,11 @@ export interface HttpRequest {
   readonly signal?: AbortSignal;
   /** `false` para los endpoints que no llevan token: sign-in, sign-up, refresh. */
   readonly authenticated?: boolean;
+  /**
+   * Una clave por INTENTO del usuario, no por render. El servidor devuelve la respuesta
+   * original en vez de crear una segunda reserva.
+   */
+  readonly idempotencyKey?: string;
 }
 
 export interface HttpClient {
@@ -65,6 +70,9 @@ export function createHttpClient(deps: HttpClientDependencies): HttpClient {
     };
     if (request.body !== undefined) headers['Content-Type'] = 'application/json';
     if (accessToken !== null) headers.Authorization = `Bearer ${accessToken}`;
+    if (request.idempotencyKey !== undefined) {
+      headers['Idempotency-Key'] = request.idempotencyKey;
+    }
 
     try {
       return await doFetch(url, {

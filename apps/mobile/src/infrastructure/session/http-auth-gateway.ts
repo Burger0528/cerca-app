@@ -30,6 +30,10 @@ export function createHttpAuthGateway(deps: AuthGatewayDependencies): AuthGatewa
     };
   }
 
+  function fetchActor(signal?: AbortSignal): Promise<Actor> {
+    return deps.http.request({ path: '/me', signal }, actorSchema);
+  }
+
   return {
     async signIn(credentials: SignInRequest): Promise<StoredSession> {
       const result = await deps.http.request(
@@ -47,8 +51,11 @@ export function createHttpAuthGateway(deps: AuthGatewayDependencies): AuthGatewa
       return toStoredSession(result);
     },
 
-    me(signal?: AbortSignal): Promise<Actor> {
-      return deps.http.request({ path: '/me', signal }, actorSchema);
+    me: fetchActor,
+
+    async becomeProvider(): Promise<Actor> {
+      await deps.http.requestVoid({ path: '/me/capacities/provider', method: 'POST' });
+      return fetchActor();
     },
 
     async signOut(refreshToken: string): Promise<void> {

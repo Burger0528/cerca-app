@@ -19,4 +19,5 @@ export interface Services {
   readonly location: LocationPort;
   /** El reloj, también inyectado: un test que dependa de `Date.now()` real es un test lento. */
   readonly now: () => number;
+  readonly newIdempotencyKey: () => string;
 }
