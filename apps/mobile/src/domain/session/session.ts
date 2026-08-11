@@ -55,7 +55,4 @@ export function isExpired(
   return tokens.expiresAt - skewMilliseconds <= now;
 }
 
-/** `expiresIn` viene del servidor en segundos; el reloj de la app trabaja en ms. */
-export function expiresAtFrom(expiresInSeconds: number, now: number): number {
-  return now + expiresInSeconds * 1000;
-}
+export { expiresAtFrom, expiryFromAccessToken } from './access-token';

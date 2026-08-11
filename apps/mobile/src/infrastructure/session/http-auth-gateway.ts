@@ -1,5 +1,5 @@
-import { authSessionSchema, actorSchema } from '@cerca/contract';
-import type { Actor, SignInRequest, SignUpRequest } from '@cerca/contract';
+import { actorSchema, authResultSchema } from '@cerca/contract';
+import type { Actor, AuthResult, SignInRequest, SignUpRequest } from '@cerca/contract';
 
 import type { AuthGatewayPort } from '../../domain/session/ports';
 import type { StoredSession } from '../../domain/session/session';
@@ -15,39 +15,36 @@ export function createHttpAuthGateway(deps: AuthGatewayDependencies): AuthGatewa
   const now = deps.now ?? Date.now;
 
   /**
-   * El servidor manda `expiresIn` (cuántos segundos DURA); la app necesita `expiresAt`
-   * (CUÁNDO caduca). La conversión se hace aquí, en el borde, con el reloj de este momento.
-   * Hacerla más tarde metería en la cuenta todo lo que haya tardado el resto de la app.
+   * La respuesta del servidor es PLANA y no dice cuándo caduca el token; la app necesita un
+   * `expiresAt` para renovar antes de que reviente. El instante sale del claim `exp` del
+   * propio access token, y la conversión se hace aquí, en el borde.
    */
-  function toStoredSession(session: {
-    actor: Actor;
-    tokens: { accessToken: string; refreshToken: string; expiresIn: number };
-  }): StoredSession {
+  function toStoredSession(result: AuthResult): StoredSession {
     return {
-      actor: session.actor,
+      actor: result.actor,
       tokens: {
-        accessToken: session.tokens.accessToken,
-        refreshToken: session.tokens.refreshToken,
-        expiresAt: expiresAtFrom(session.tokens.expiresIn, now()),
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        expiresAt: expiresAtFrom(result.accessToken, now()),
       },
     };
   }
 
   return {
     async signIn(credentials: SignInRequest): Promise<StoredSession> {
-      const session = await deps.http.request(
+      const result = await deps.http.request(
         { path: '/auth/sign-in', method: 'POST', body: credentials, authenticated: false },
-        authSessionSchema,
+        authResultSchema,
       );
-      return toStoredSession(session);
+      return toStoredSession(result);
     },
 
     async signUp(request: SignUpRequest): Promise<StoredSession> {
-      const session = await deps.http.request(
+      const result = await deps.http.request(
         { path: '/auth/sign-up', method: 'POST', body: request, authenticated: false },
-        authSessionSchema,
+        authResultSchema,
       );
-      return toStoredSession(session);
+      return toStoredSession(result);
     },
 
     me(signal?: AbortSignal): Promise<Actor> {

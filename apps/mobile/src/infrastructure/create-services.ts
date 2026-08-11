@@ -5,7 +5,10 @@
  * ubicación es expo-location. Cambiar cualquiera de las dos cosas se hace aquí y en ningún
  * sitio más: ni `application` ni `presentation` nombran nunca a Expo.
  */
+import { Platform } from 'react-native';
+
 import type { Services } from '../domain/services';
+import type { SessionStoragePort } from '../domain/session/ports';
 
 import { createHttpClient } from './http/http-client';
 import {
@@ -16,17 +19,33 @@ import { createExpoLocationAdapter } from './location/expo-location-adapter';
 import { createHttpAuthGateway } from './session/http-auth-gateway';
 import { createSecureSessionStorage } from './session/secure-session-storage';
 import { createSessionManager } from './session/session-manager';
+import { createWebSessionStorage } from './session/web-session-storage';
 
 export interface CreateServicesOptions {
   /** Se dispara cuando el refresh token muere: la app tiene que mandar a login. */
   readonly onSessionLost?: () => void;
 }
 
+/**
+ * El llavero solo existe en el teléfono.
+ *
+ * `expo-secure-store` no tiene implementación web —su build de navegador es un objeto
+ * vacío— así que en web la primera lectura de la sesión reventaría antes de pintar nada.
+ * La decisión vive aquí porque este es el único archivo que elige implementaciones; ni
+ * `application` ni `presentation` saben que web existe.
+ *
+ * OJO: el almacén de web NO es seguro. Está para desarrollo y demos en navegador. Lo
+ * explica `web-session-storage.ts`.
+ */
+function createPlatformSessionStorage(): SessionStoragePort {
+  return Platform.OS === 'web' ? createWebSessionStorage() : createSecureSessionStorage();
+}
+
 export function createServices(options: CreateServicesOptions = {}): Services {
   const now = Date.now;
 
   const sessionManager = createSessionManager({
-    storage: createSecureSessionStorage(),
+    storage: createPlatformSessionStorage(),
     now,
     ...(options.onSessionLost === undefined ? {} : { onSessionLost: options.onSessionLost }),
   });

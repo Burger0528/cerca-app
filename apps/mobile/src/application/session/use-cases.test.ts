@@ -6,12 +6,9 @@ import type { StoredSession } from '../../domain/session/session';
 import { restoreSession, signOut } from './use-cases';
 
 const actor: Actor = {
-  id: 'usr_1',
-  displayName: 'Jorge',
-  email: 'jorge@cerca.app',
+  id: 'b1d9f0c2-3e4a-4b5c-8d6e-7f8091a2b3c4',
   capacities: ['customer'],
   platformRole: 'user',
-  avatarUrl: null,
 };
 
 const NOW = 1_700_000_000_000;

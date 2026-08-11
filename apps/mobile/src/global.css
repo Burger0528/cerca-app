@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/**
+ * La paleta, y el ÚNICO sitio donde vive un color literal.
+ *
+ * Están aquí y no en `tailwind.config.js` porque un color tiene DOS valores, uno por tema,
+ * y una variable CSS es lo que permite que `bg-surface` signifique una cosa de día y otra
+ * de noche sin que el componente se entere. El config mapea nombre semántico → variable;
+ * los componentes solo escriben `bg-surface`, nunca un hexadecimal ni un `dark:`.
+ *
+ * Los valores van como tripletes `R G B` sin `rgb()` alrededor: es lo que permite que
+ * `bg-surface/50` siga funcionando, porque Tailwind inyecta la opacidad dentro del `rgb()`
+ * que arma el config.
+ *
+ * Reglas para tocar esto:
+ *   - Ningún nombre de color describe el color ("blue-500"). Describe el PAPEL ("brand").
+ *   - Todo lo que se añada aquí se añade en los dos bloques. Un token sin variante oscura
+ *     es un texto negro sobre fondo negro esperando a que alguien ponga el móvil en modo
+ *     noche.
+ */
+@layer base {
+  :root {
+    /* Superficies, de más al fondo a más al frente. */
+    --color-surface: 255 255 255;
+    --color-surface-raised: 245 246 248;
+    --color-surface-sunken: 235 237 241;
+
+    /* Texto y bordes. */
+    --color-foreground: 16 20 24;
+    --color-muted: 91 101 114;
+    --color-subtle: 226 229 234;
+
+    /* Marca y acciones. */
+    --color-brand: 32 138 239;
+    --color-brand-foreground: 255 255 255;
+    --color-danger: 199 56 43;
+
+    /* Estado de un anuncio. Cada uno con su fondo de badge. */
+    --color-status-published: 27 127 79;
+    --color-status-published-surface: 231 245 238;
+    --color-status-paused: 138 106 18;
+    --color-status-paused-surface: 251 242 220;
+    --color-status-removed: 138 47 39;
+    --color-status-removed-surface: 251 233 231;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-surface: 11 15 20;
+      --color-surface-raised: 21 27 34;
+      --color-surface-sunken: 30 38 47;
+
+      --color-foreground: 242 245 248;
+      --color-muted: 154 166 180;
+      --color-subtle: 35 44 54;
+
+      /* El azul de marca se aclara: el de día sobre fondo oscuro no llega a contraste AA. */
+      --color-brand: 79 163 245;
+      --color-brand-foreground: 8 17 26;
+      --color-danger: 241 120 108;
+
+      --color-status-published: 85 198 140;
+      --color-status-published-surface: 16 41 30;
+      --color-status-paused: 214 172 63;
+      --color-status-paused-surface: 43 36 16;
+      --color-status-removed: 232 136 128;
+      --color-status-removed-surface: 46 22 20;
+    }
+  }
+}

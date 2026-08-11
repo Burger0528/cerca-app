@@ -1,10 +1,11 @@
 /**
  * OWNER: Salvador.
  *
- * Jorge deja el cableado (preset de NativeWind, rutas de `content`, el token `min-h-touch`
- * de 44 pt). Salvador pone la paleta semántica: `bg-surface`, `text-status-removed`, etc.
+ * El mapa de nombre semántico → variable CSS. Los valores viven en `src/global.css`, que
+ * es donde cada token tiene su pareja clara y oscura; aquí solo se les pone nombre.
  *
- * Regla del sprint: el hexadecimal solo vive aquí. Ningún `#fff` en un componente.
+ * Regla del sprint: en un componente no se escribe un color. Ni `#fff`, ni `blue-500`, ni
+ * `dark:`. Se escribe `bg-surface`, `text-muted`, `border-subtle`, y el tema decide.
  *
  * @type {import('tailwindcss').Config}
  */
@@ -14,27 +15,45 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // TODO(salvador): paleta semántica completa, con su variante oscura.
-        // Nada de `blue-500` en los componentes: `bg-surface`, `text-muted`, `border-subtle`.
-        surface: '#FFFFFF',
-        'surface-raised': '#F5F6F8',
-        foreground: '#101418',
-        muted: '#5B6572',
-        subtle: '#E2E5EA',
-        brand: '#208AEF',
-        danger: '#C7382B',
-        'status-published': '#1B7F4F',
-        'status-paused': '#8A6A12',
-        'status-removed': '#8A2F27',
+        surface: withOpacity('--color-surface'),
+        'surface-raised': withOpacity('--color-surface-raised'),
+        'surface-sunken': withOpacity('--color-surface-sunken'),
+
+        foreground: withOpacity('--color-foreground'),
+        muted: withOpacity('--color-muted'),
+        subtle: withOpacity('--color-subtle'),
+
+        brand: withOpacity('--color-brand'),
+        'brand-foreground': withOpacity('--color-brand-foreground'),
+        danger: withOpacity('--color-danger'),
+
+        'status-published': withOpacity('--color-status-published'),
+        'status-published-surface': withOpacity('--color-status-published-surface'),
+        'status-paused': withOpacity('--color-status-paused'),
+        'status-paused-surface': withOpacity('--color-status-paused-surface'),
+        'status-removed': withOpacity('--color-status-removed'),
+        'status-removed-surface': withOpacity('--color-status-removed-surface'),
       },
       minHeight: {
-        // Área táctil mínima de las HIG y de Material. Un botón por debajo de esto se falla en review.
+        // Área táctil mínima de las HIG y de Material. Un botón por debajo se falla en review.
         touch: '44px',
       },
       minWidth: {
         touch: '44px',
       },
+      borderRadius: {
+        card: '16px',
+      },
     },
   },
   plugins: [],
 };
+
+/**
+ * Envuelve la variable para que la utilidad con opacidad (`bg-surface/60`) siga
+ * funcionando: Tailwind sustituye `<alpha-value>` por el número de la clase, y si el color
+ * fuese la variable pelada no habría dónde meterlo.
+ */
+function withOpacity(variable) {
+  return `rgb(var(${variable}) / <alpha-value>)`;
+}

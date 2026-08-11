@@ -2,26 +2,21 @@ import { describe, expect, it } from 'vitest';
 
 import { EMPTY_LISTING_FILTERS, hasActiveFilters, listingSchema } from './listing.ts';
 
+/** Un resultado tal y como lo emite `toSearchItem` del backend. */
 const validListing = {
-  id: 'lst_1',
+  id: '3f1a2b4c-5d6e-4f70-8192-a3b4c5d6e7f8',
   title: 'Fontanería 24 h',
+  categoryId: '11111111-2222-4333-8444-555555555555',
+  priceFrom: { amountMinor: 45000, currency: 'MXN' },
   status: 'published',
-  category: { id: 'cat_1', nameKey: 'category.plumbing', slug: 'plumbing', parentId: null },
-  price: {
-    amount: { amountMinor: 45000, currency: 'MXN' },
-    unit: 'hour',
-    minimumUnits: 2,
-  },
-  rating: { average: 4.8, count: 200 },
-  provider: { id: 'usr_1', displayName: 'Ana', avatarUrl: null },
-  images: [],
-  coordinates: { latitude: 19.4326, longitude: -99.1332 },
+  ratingAvg: 4.8,
+  ratingCount: 200,
   distanceMeters: 1200,
 };
 
 describe('listingSchema', () => {
   it('parses a well formed listing', () => {
-    expect(listingSchema.parse(validListing).id).toBe('lst_1');
+    expect(listingSchema.parse(validListing).id).toBe(validListing.id);
   });
 
   it('names the offending field when a required one is missing', () => {
@@ -37,6 +32,20 @@ describe('listingSchema', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('accepts the five statuses the backend can emit', () => {
+    for (const status of ['draft', 'published', 'paused', 'under_review', 'removed']) {
+      expect(listingSchema.safeParse({ ...validListing, status }).success).toBe(true);
+    }
+  });
+
+  it('accepts a listing quoted on request, with no price to sort by', () => {
+    expect(listingSchema.parse({ ...validListing, priceFrom: null }).priceFrom).toBeNull();
+  });
+
+  it('rejects an id that is not a uuid, which is what the backend emits', () => {
+    expect(listingSchema.safeParse({ ...validListing, id: 'lst_1' }).success).toBe(false);
+  });
 });
 
 describe('hasActiveFilters', () => {
@@ -49,6 +58,12 @@ describe('hasActiveFilters', () => {
   });
 
   it('is true once a real filter is set', () => {
-    expect(hasActiveFilters({ ...EMPTY_LISTING_FILTERS, minRating: 4 })).toBe(true);
+    expect(hasActiveFilters({ ...EMPTY_LISTING_FILTERS, radiusKm: 5 })).toBe(true);
+    expect(
+      hasActiveFilters({
+        ...EMPTY_LISTING_FILTERS,
+        categoryId: '11111111-2222-4333-8444-555555555555',
+      }),
+    ).toBe(true);
   });
 });

@@ -6,7 +6,7 @@
  * refresh invalida el token del primero, y el usuario se ve echado a login sin haber tocado
  * nada. Con un solo dueño y single-flight eso no puede pasar.
  */
-import { authTokensSchema } from '@cerca/contract';
+import { authResultSchema } from '@cerca/contract';
 
 import { HttpError, NetworkError } from '../../domain/errors/app-error';
 import type { SessionManagerPort, SessionStoragePort } from '../../domain/session/ports';
@@ -58,7 +58,7 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
       throw new HttpError(response.status, null, `${baseUrl}/auth/refresh`);
     }
 
-    const parsed = authTokensSchema.safeParse(await response.json());
+    const parsed = authResultSchema.safeParse(await response.json());
     if (!parsed.success) return null;
 
     // El actor no cambia al renovar: se conserva el que ya había. Si no hay ninguno, esto
@@ -70,7 +70,7 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
       tokens: {
         accessToken: parsed.data.accessToken,
         refreshToken: parsed.data.refreshToken,
-        expiresAt: expiresAtFrom(parsed.data.expiresIn, now()),
+        expiresAt: expiresAtFrom(parsed.data.accessToken, now()),
       },
       actor,
     };

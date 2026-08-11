@@ -50,13 +50,13 @@ function clientWith(
 describe('buildUrl', () => {
   it('drops null and undefined so an unset filter is absent, not "null"', () => {
     const url = buildUrl('https://api.test', '/listings', {
-      q: 'fontanero',
-      minRating: null,
+      query: 'fontanero',
+      radiusKm: null,
       categoryId: undefined,
       limit: 20,
     });
 
-    expect(url).toBe('https://api.test/listings?q=fontanero&limit=20');
+    expect(url).toBe('https://api.test/listings?query=fontanero&limit=20');
   });
 
   it('leaves the url alone when there is nothing to append', () => {

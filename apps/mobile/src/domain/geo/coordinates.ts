@@ -2,9 +2,17 @@
  * Geometría pura. Sin React, sin fetch, sin Expo: son números y se pueden probar sin
  * abrir un simulador.
  */
-import type { Coordinates } from '@cerca/contract';
-
-export type { Coordinates };
+/**
+ * La coordenada del DOMINIO de la app, con nombres largos.
+ *
+ * Vive aquí y no en el contrato a propósito: el backend habla de `lat`/`lng`
+ * (`geoPointSchema`), y la traducción a esos nombres se hace en el gateway, en el borde.
+ * Así un cambio de nomenclatura del servidor no se propaga por toda la app.
+ */
+export interface Coordinates {
+  readonly latitude: number;
+  readonly longitude: number;
+}
 
 /**
  * Decimales a los que se redondea la coordenada antes de meterla en la clave de caché.

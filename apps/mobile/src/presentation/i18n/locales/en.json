@@ -3,7 +3,9 @@
     "retry": "Try again",
     "cancel": "Cancel",
     "continue": "Continue",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "close": "Close",
+    "apply": "Apply"
   },
   "session": {
     "restoring": "Restoring your session…",
@@ -13,17 +15,86 @@
     "signIn": {
       "title": "Sign in",
       "submit": "Sign in",
+      "submitting": "Signing in…",
       "toSignUp": "Create an account"
     },
     "signUp": {
       "title": "Create an account",
       "submit": "Create account",
+      "submitting": "Creating your account…",
       "toSignIn": "I already have an account"
+    },
+    "fields": {
+      "displayName": "Name",
+      "displayNamePlaceholder": "Marta Ruiz",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters"
+    },
+    "errors": {
+      "invalidCredentials": "That email and password don't match.",
+      "emailTaken": "There's already an account with that email.",
+      "accountSuspended": "This account has been suspended. Contact support.",
+      "sessionExpired": "Your session expired. Sign in again."
     }
   },
   "search": {
     "title": "Near you",
-    "placeholder": "What do you need? Plumber, electrician…"
+    "placeholder": "What do you need? Plumber, electrician…",
+    "resultCount_one": "{{count}} result",
+    "resultCount_other": "{{count}} results",
+    "empty": {
+      "initial": {
+        "title": "Nothing around here yet",
+        "body": "We found no services within {{radius}} of you.",
+        "action": "Search a wider area"
+      },
+      "filtered": {
+        "title": "No matches for these filters",
+        "body": "Try removing one, or clear them all and start over.",
+        "action": "Clear filters"
+      }
+    },
+    "filters": {
+      "open": "Filters",
+      "title": "Filters",
+      "category": "Category",
+      "anyCategory": "Any category",
+      "radius": "Distance",
+      "radiusValue": "Within {{distance}}",
+      "anyRadius": "Any distance",
+      "clear": "Clear filters",
+      "showResults": "Show results",
+      "activeCount_one": "{{count}} filter on",
+      "activeCount_other": "{{count}} filters on"
+    }
+  },
+  "listing": {
+    "price": {
+      "fixed": "{{price}}",
+      "hourly": "{{price}} / hour",
+      "quote": "On request",
+      "quoteFrom": "From {{price}}",
+      "from": "From {{price}}",
+      "minimumHours": "minimum {{count}} h",
+      "separator": " · "
+    },
+    "rating": {
+      "reviews_one": "{{count}} review",
+      "reviews_other": "{{count}} reviews",
+      "none": "No reviews yet"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Available",
+      "paused": "Paused",
+      "under_review": "Under review",
+      "removed": "Unavailable"
+    },
+    "a11y": {
+      "card": "{{title}}. {{price}}. {{rating}}. {{distance}} away."
+    }
   },
   "location": {
     "title": "Where should we search from?",
@@ -43,7 +114,8 @@
     "timeout": "This is taking too long. Try again.",
     "server": "Something broke on our side. Try again in a moment.",
     "contract": "We got a response we don't understand. We're on it.",
-    "unknown": "Something went wrong."
+    "unknown": "Something went wrong.",
+    "locationRequired": "We need a location to search from. Allow location or pick a city."
   },
   "validation": {
     "email": {
@@ -51,10 +123,15 @@
     },
     "password": {
       "required": "Enter your password.",
-      "tooShort": "At least 8 characters."
+      "tooShort": "At least 8 characters.",
+      "tooLong": "That is too long."
     },
     "displayName": {
-      "required": "Enter your name."
+      "required": "Enter your name.",
+      "tooLong": "That name is too long."
+    },
+    "currency": {
+      "invalid": "Unsupported currency."
     }
   }
 }

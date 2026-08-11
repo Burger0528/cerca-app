@@ -40,19 +40,21 @@ export function createHttpCategoryGateway(http: HttpClient): CategoryGatewayPort
 /**
  * Aplana la búsqueda a query string.
  *
+ * Los nombres son los de `searchListingsQuerySchema` del backend, que además es `.strict()`:
+ * un parámetro que no reconozca no se ignora, devuelve un 400. Por eso aquí no hay ni uno
+ * de más.
+ *
  * Los `null` se van tal cual: `buildUrl` los descarta, así que un filtro sin poner
- * sencillamente no aparece en la URL. `?minRating=null` sería un filtro puesto con un
- * valor absurdo, y el backend tendría que adivinar qué se quiso decir.
+ * sencillamente no aparece en la URL y el servidor aplica su valor por defecto.
+ * `?radiusKm=null` sería un filtro puesto con un valor absurdo.
  */
 function toQueryString(query: ListingSearchQuery): Record<string, QueryValue> {
   return {
-    q: query.filters.query.trim() === '' ? null : query.filters.query.trim(),
+    query: query.filters.query.trim() === '' ? null : query.filters.query.trim(),
     categoryId: query.filters.categoryId,
-    radiusMeters: query.filters.radiusMeters,
-    minRating: query.filters.minRating,
-    maxPriceMinor: query.filters.maxPriceMinor,
-    latitude: query.origin?.latitude ?? null,
-    longitude: query.origin?.longitude ?? null,
+    radiusKm: query.filters.radiusKm,
+    lat: query.origin?.latitude ?? null,
+    lng: query.origin?.longitude ?? null,
     cursor: query.cursor,
     limit: query.limit,
   };

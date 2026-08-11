@@ -39,7 +39,7 @@ describe('buildListingSearchQuery', () => {
       deviceOrigin(19.4326, -99.1332),
     );
     const withFilter = buildListingSearchQuery(
-      { ...EMPTY_LISTING_FILTERS, minRating: 4 },
+      { ...EMPTY_LISTING_FILTERS, radiusKm: 5 },
       deviceOrigin(19.4326, -99.1332),
     );
 

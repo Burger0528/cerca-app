@@ -33,15 +33,24 @@ export class HttpError extends Error {
     readonly problem: ProblemDetails | null,
     readonly url: string,
   ) {
-    super(`${status} en ${url}${problem?.reason ? ` (${problem.reason})` : ''}`);
+    super(`${status} en ${url}${problem?.code ? ` (${problem.code})` : ''}`);
   }
 
   /**
    * La clave estable de negocio, si el servidor la mandó. Es lo que la UI traduce.
    * `problem.detail` es prosa del servidor y no se enseña nunca tal cual.
+   *
+   * Se prefiere `code` porque es el que viene siempre; `reason` solo acompaña a algunos
+   * errores y es más fino (`not_owner`). Si algún día un error trae los dos y la UI
+   * necesita distinguirlos, `problem` sigue entero ahí.
    */
   get reason(): string | null {
-    return this.problem?.reason ?? null;
+    return this.problem?.code ?? this.problem?.reason ?? null;
+  }
+
+  /** El identificador de la petición en los logs del servidor, para poder buscarla. */
+  get traceId(): string | null {
+    return this.problem?.traceId ?? null;
   }
 
   /** 401 y 403 no se reintentan: reintentar no va a cambiar quién eres. */
