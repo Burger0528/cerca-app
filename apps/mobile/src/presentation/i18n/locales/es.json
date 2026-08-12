@@ -112,6 +112,43 @@
       }
     }
   },
+  "bookings": {
+    "tabTitle": "Reservas",
+    "title": "Tus reservas",
+    "scheduledFor": "Citado para el {{date}}",
+    "acceptIn_one": "Mañana",
+    "acceptIn_other": "En {{count}} días",
+    "role": {
+      "customer": "He reservado",
+      "provider": "Me han reservado"
+    },
+    "status": {
+      "requested": "Esperando al proveedor",
+      "accepted": "Aceptada",
+      "declined": "Rechazada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    },
+    "action": {
+      "accept": "Aceptar",
+      "decline": "Rechazar",
+      "complete": "Marcar como hecha",
+      "cancel": "Cancelar"
+    },
+    "empty": {
+      "customer": {
+        "title": "Todavía no has reservado nada",
+        "body": "Busca un servicio que necesites y solicítalo."
+      },
+      "provider": {
+        "title": "Todavía no te ha reservado nadie",
+        "body": "Las solicitudes de tus anuncios aparecerán aquí."
+      }
+    },
+    "a11y": {
+      "row": "Reserva. {{status}}. {{date}}."
+    }
+  },
   "booking": {
     "request": "Solicitar este servicio",
     "requesting": "Enviando tu solicitud…",

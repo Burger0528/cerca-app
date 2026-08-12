@@ -109,3 +109,15 @@ export type CreateBookingRequest = z.infer<typeof createBookingSchema>;
 export const BOOKING_ROLES = ['customer', 'provider'] as const;
 
 export type BookingRole = (typeof BOOKING_ROLES)[number];
+
+export const DECLINE_REASONS = ['unavailable', 'not_a_fit', 'other'] as const;
+
+export type DeclineReason = (typeof DECLINE_REASONS)[number];
+
+export const acceptBookingSchema = z.object({ scheduledFor: z.iso.datetime() }).strict();
+
+export type AcceptBookingRequest = z.infer<typeof acceptBookingSchema>;
+
+export const declineBookingSchema = z.object({ reason: z.enum(DECLINE_REASONS) }).strict();
+
+export type DeclineBookingRequest = z.infer<typeof declineBookingSchema>;

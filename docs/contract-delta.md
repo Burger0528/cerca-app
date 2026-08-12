@@ -97,6 +97,27 @@ El backend está en `/Users/usuario/Developer/cerca-api` y su seed
 (`apps/api/prisma/seed.ts`) crea `moderator@cerca.app` y `admin@cerca.app`. Sirven para
 probar los dos ejes de autorización sin tocar la base de datos.
 
+## 1 quinquies. Las reservas · lo que falta para poder pintarlas bien
+
+`bookingResponseSchema` viaja **plano**: `status` más `requestedAt`, `scheduledFor` y
+`completedAt` anulables. Ahí caben estados imposibles —"completada" sin fecha— así que la
+app **deshace el aplanado** en el límite y reconstruye la unión discriminada que pide el
+enunciado (`packages/contract/src/booking/booking.ts`).
+
+Lo que el servidor no manda, la app no inventa, y por eso su unión es más pobre que la del
+enunciado:
+
+| Estado      | El enunciado quiere           | El servidor manda   |
+| ----------- | ----------------------------- | ------------------- |
+| `accepted`  | `acceptedAt` + `scheduledFor` | solo `scheduledFor` |
+| `declined`  | `reason`                      | nada                |
+| `cancelled` | `cancelledBy` + `at`          | nada                |
+
+**Y falta lo más visible:** `GET /bookings` devuelve solo `listingId`, sin el título del
+anuncio. La lista de reservas **no puede decir qué se reservó** sin una petición por fila.
+Hoy enseña estado y fecha. Con `listingTitle` en la respuesta —un join que el servidor ya
+tiene— la pantalla diría "Clases de guitarra · aceptada".
+
 ## 2. El Actor no trae nombre ni correo
 
 `toActorResponse` devuelve tres campos. La app no puede saludar a nadie por su nombre ni

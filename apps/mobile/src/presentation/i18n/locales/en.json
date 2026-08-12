@@ -112,6 +112,43 @@
       }
     }
   },
+  "bookings": {
+    "tabTitle": "Bookings",
+    "title": "Your bookings",
+    "scheduledFor": "Scheduled for {{date}}",
+    "acceptIn_one": "Tomorrow",
+    "acceptIn_other": "In {{count}} days",
+    "role": {
+      "customer": "I booked",
+      "provider": "I provide"
+    },
+    "status": {
+      "requested": "Waiting for the provider",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "action": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "complete": "Mark as done",
+      "cancel": "Cancel"
+    },
+    "empty": {
+      "customer": {
+        "title": "You haven't booked anything yet",
+        "body": "Find a service you need and request it."
+      },
+      "provider": {
+        "title": "No one has booked you yet",
+        "body": "Requests for your listings will show up here."
+      }
+    },
+    "a11y": {
+      "row": "Booking. {{status}}. {{date}}."
+    }
+  },
   "booking": {
     "request": "Request this service",
     "requesting": "Sending your request…",

@@ -1,8 +1,17 @@
-import { bookingSchema } from '@cerca/contract';
-import type { Booking, CreateBookingRequest } from '@cerca/contract';
+import { bookingSchema, cursorPageSchema } from '@cerca/contract';
+import type {
+  AcceptBookingRequest,
+  Booking,
+  BookingRole,
+  CreateBookingRequest,
+  CursorPage,
+  DeclineBookingRequest,
+} from '@cerca/contract';
 
 import type { BookingGatewayPort } from '../../domain/bookings/ports';
 import type { HttpClient } from '../http/http-client';
+
+const bookingPageSchema = cursorPageSchema(bookingSchema);
 
 export function createHttpBookingGateway(http: HttpClient): BookingGatewayPort {
   return {
@@ -11,6 +20,41 @@ export function createHttpBookingGateway(http: HttpClient): BookingGatewayPort {
         { path: '/bookings', method: 'POST', body: request, idempotencyKey },
         bookingSchema,
       );
+    },
+
+    list(
+      role: BookingRole,
+      cursor: string | null,
+      signal?: AbortSignal,
+    ): Promise<CursorPage<Booking>> {
+      return http.request(
+        { path: '/bookings', query: { role, cursor }, signal },
+        bookingPageSchema,
+      );
+    },
+
+    accept(bookingId: string, request: AcceptBookingRequest): Promise<void> {
+      return http.requestVoid({
+        path: `/bookings/${bookingId}/accept`,
+        method: 'POST',
+        body: request,
+      });
+    },
+
+    decline(bookingId: string, request: DeclineBookingRequest): Promise<void> {
+      return http.requestVoid({
+        path: `/bookings/${bookingId}/decline`,
+        method: 'POST',
+        body: request,
+      });
+    },
+
+    complete(bookingId: string): Promise<void> {
+      return http.requestVoid({ path: `/bookings/${bookingId}/complete`, method: 'POST' });
+    },
+
+    cancel(bookingId: string): Promise<void> {
+      return http.requestVoid({ path: `/bookings/${bookingId}/cancel`, method: 'POST' });
     },
   };
 }
