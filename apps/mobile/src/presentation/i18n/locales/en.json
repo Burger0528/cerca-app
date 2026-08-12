@@ -176,6 +176,15 @@
       "minimumHours": "minimum {{count}} h",
       "separator": " · "
     },
+    "detail": {
+      "notFound": {
+        "title": "This listing is no longer available",
+        "body": "It may have been removed, or the link is wrong."
+      },
+      "share": "Share",
+      "shareMessage": "{{title}} on Cerca: {{url}}"
+    },
+
     "rating": {
       "reviews_one": "{{count}} review",
       "reviews_other": "{{count}} reviews",

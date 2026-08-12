@@ -176,6 +176,14 @@
       "minimumHours": "mínimo {{count}} h",
       "separator": " · "
     },
+    "detail": {
+      "notFound": {
+        "title": "Este anuncio ya no está disponible",
+        "body": "Puede que lo hayan retirado o que el enlace esté mal."
+      },
+      "share": "Compartir",
+      "shareMessage": "{{title}} en Cerca: {{url}}"
+    },
     "rating": {
       "reviews_one": "{{count}} reseña",
       "reviews_other": "{{count}} reseñas",
