@@ -11,6 +11,7 @@ import { Platform } from 'react-native';
 import type { Services } from '../domain/services';
 import type { SessionStoragePort } from '../domain/session/ports';
 
+import { createHttpBookingGateway } from './booking/http-booking-gateway';
 import { createHttpClient } from './http/http-client';
 import {
   createHttpCategoryGateway,
@@ -63,6 +64,7 @@ export function createServices(options: CreateServicesOptions = {}): Services {
     sessionManager,
     authGateway: createHttpAuthGateway({ http, now }),
     listingGateway: createHttpListingGateway(http),
+    bookingGateway: createHttpBookingGateway(http),
     categoryGateway: createHttpCategoryGateway(http),
     moderationGateway: createHttpModerationGateway(http),
     location: createExpoLocationAdapter(),

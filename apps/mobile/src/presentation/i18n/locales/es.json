@@ -182,7 +182,11 @@
         "body": "Puede que lo hayan retirado o que el enlace esté mal."
       },
       "share": "Compartir",
-      "shareMessage": "{{title}} en Cerca: {{url}}"
+      "shareMessage": "{{title}} en Cerca: {{url}}",
+      "book": "Reservar",
+      "booking": "Enviando…",
+      "bookOwnListing": "No puedes reservar tu propio anuncio",
+      "bookSuccess": "Solicitud enviada. Te avisamos cuando el proveedor responda."
     },
     "rating": {
       "reviews_one": "{{count}} reseña",

@@ -23,11 +23,13 @@ import {
   NetworkError,
   TimeoutError,
 } from '../../domain/errors/app-error';
+import { useActor } from '../auth/use-can';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useLocale } from '../hooks/use-locale';
+import { useRequestBooking } from '../hooks/use-request-booking';
 import type { FeedbackMessageKey } from '../i18n/message-keys';
 
 export function ListingDetailScreen() {
@@ -38,6 +40,8 @@ export function ListingDetailScreen() {
   const { t } = useTranslation();
   const locale = useLocale();
   const detail = useListingDetail(id);
+  const actor = useActor();
+  const booking = useRequestBooking();
 
   if (detail.isPending) {
     return (
@@ -78,6 +82,7 @@ export function ListingDetailScreen() {
     distanceMeters === undefined
       ? null
       : formatDistance({ meters: Number(distanceMeters) }, locale);
+  const isOwnListing = actor !== null && actor.id === listing.ownerId;
 
   return (
     <View className="flex-1 gap-3 bg-surface px-4 py-4">
@@ -107,6 +112,30 @@ export function ListingDetailScreen() {
       >
         {t('listing.detail.share')}
       </Button>
+
+      <Button
+        isDisabled={isOwnListing}
+        isLoading={booking.isPending}
+        onPress={() => booking.mutate({ listingId: listing.id })}
+      >
+        {booking.isPending ? t('listing.detail.booking') : t('listing.detail.book')}
+      </Button>
+
+      {isOwnListing ? (
+        <Text className="text-center text-sm text-muted">{t('listing.detail.bookOwnListing')}</Text>
+      ) : null}
+
+      {booking.isSuccess ? (
+        <Text className="text-center text-sm text-muted" accessibilityLiveRegion="polite">
+          {t('listing.detail.bookSuccess')}
+        </Text>
+      ) : null}
+
+      {booking.isError ? (
+        <Text className="text-center text-sm text-danger" accessibilityLiveRegion="polite">
+          {t(messageKeyFor(booking.error))}
+        </Text>
+      ) : null}
     </View>
   );
 }

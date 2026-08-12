@@ -182,7 +182,11 @@
         "body": "It may have been removed, or the link is wrong."
       },
       "share": "Share",
-      "shareMessage": "{{title}} on Cerca: {{url}}"
+      "shareMessage": "{{title}} on Cerca: {{url}}",
+      "book": "Book",
+      "booking": "Booking…",
+      "bookOwnListing": "You can't book your own listing",
+      "bookSuccess": "Request sent. We'll let you know when the provider responds."
     },
 
     "rating": {

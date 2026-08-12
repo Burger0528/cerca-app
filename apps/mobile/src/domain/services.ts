@@ -7,6 +7,7 @@
  *
  * En un test, esto se rellena con dobles y la pantalla no se entera.
  */
+import type { BookingGatewayPort } from './booking/ports';
 import type { CategoryGatewayPort, ListingGatewayPort } from './listings/ports';
 import type { LocationPort } from './location/location';
 import type { ModerationGatewayPort } from './moderation/ports';
@@ -16,6 +17,7 @@ export interface Services {
   readonly authGateway: AuthGatewayPort;
   readonly sessionManager: SessionManagerPort;
   readonly listingGateway: ListingGatewayPort;
+  readonly bookingGateway: BookingGatewayPort;
   readonly categoryGateway: CategoryGatewayPort;
   readonly moderationGateway: ModerationGatewayPort;
   readonly location: LocationPort;
