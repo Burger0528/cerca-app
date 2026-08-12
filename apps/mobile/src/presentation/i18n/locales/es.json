@@ -112,6 +112,15 @@
       }
     }
   },
+  "booking": {
+    "request": "Solicitar este servicio",
+    "requesting": "Enviando tu solicitud…",
+    "requested": "Solicitud enviada",
+    "blocked": {
+      "own_listing": "Este anuncio es tuyo.",
+      "not_bookable": "Este anuncio no acepta reservas ahora mismo."
+    }
+  },
   "moderation": {
     "tabTitle": "Denuncias",
     "reports": {

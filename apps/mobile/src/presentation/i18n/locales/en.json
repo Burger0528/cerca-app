@@ -112,6 +112,15 @@
       }
     }
   },
+  "booking": {
+    "request": "Request this service",
+    "requesting": "Sending your request…",
+    "requested": "Request sent",
+    "blocked": {
+      "own_listing": "This is your own listing.",
+      "not_bookable": "This listing isn't taking bookings right now."
+    }
+  },
   "moderation": {
     "tabTitle": "Reports",
     "reports": {

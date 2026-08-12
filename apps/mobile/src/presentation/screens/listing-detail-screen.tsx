@@ -20,6 +20,8 @@ import { ActivityIndicator, Share, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HttpError } from '../../domain/errors/app-error';
+import { useActor } from '../auth/use-can';
+import { BookListingButton } from '../components/book-listing-button';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
 import { StatusBadge } from '../components/status-badge';
@@ -34,6 +36,7 @@ export function ListingDetailScreen() {
   }>();
   const { t } = useTranslation();
   const locale = useLocale();
+  const actor = useActor();
   const detail = useListingDetail(id);
 
   if (detail.isPending) {
@@ -92,6 +95,8 @@ export function ListingDetailScreen() {
       </Text>
 
       <Text className="text-base text-foreground">{listing.description}</Text>
+
+      {actor === null ? null : <BookListingButton listing={listing} actor={actor} />}
 
       <Button
         variant="secondary"
