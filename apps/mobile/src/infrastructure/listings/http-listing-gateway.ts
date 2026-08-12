@@ -13,6 +13,7 @@ import type {
   ListingDetail,
   ListingStatusAction,
   MyListing,
+  UpdateListingRequest,
 } from '@cerca/contract';
 import { z } from 'zod';
 
@@ -49,6 +50,17 @@ export function createHttpListingGateway(http: HttpClient): ListingGatewayPort {
     create(request: CreateListingRequest): Promise<ListingDetail> {
       return http.request(
         { path: '/listings', method: 'POST', body: request },
+        listingDetailSchema,
+      );
+    },
+
+    detail(listingId: string, signal?: AbortSignal): Promise<ListingDetail> {
+      return http.request({ path: `/listings/${listingId}`, signal }, listingDetailSchema);
+    },
+
+    update(listingId: string, request: UpdateListingRequest): Promise<ListingDetail> {
+      return http.request(
+        { path: `/listings/${listingId}`, method: 'PATCH', body: request },
         listingDetailSchema,
       );
     },

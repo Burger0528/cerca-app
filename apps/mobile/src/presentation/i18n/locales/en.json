@@ -60,12 +60,18 @@
       "create": "Publish a listing",
       "action": {
         "publish": "Publish",
-        "pause": "Pause"
+        "pause": "Pause",
+        "edit": "Edit"
       },
       "locked": {
         "under_review": "Under review. You can't change it while we look into it.",
         "removed": "Removed by moderation. It can't be published again."
       }
+    },
+    "editListing": {
+      "title": "Edit listing",
+      "save": "Save changes",
+      "saving": "Saving…"
     },
     "newListing": {
       "step": "Step {{current}} of {{total}}",
@@ -183,7 +189,9 @@
     "server": "Something broke on our side. Try again in a moment.",
     "contract": "We got a response we don't understand. We're on it.",
     "unknown": "Something went wrong.",
-    "locationRequired": "We need a location to search from. Allow location or pick a city."
+    "locationRequired": "We need a location to search from. Allow location or pick a city.",
+    "notOwner": "This listing isn't yours, so you can't change it.",
+    "validation": "Check the fields: something isn't right."
   },
   "validation": {
     "email": {

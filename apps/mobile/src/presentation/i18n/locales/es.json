@@ -60,12 +60,18 @@
       "create": "Publicar un anuncio",
       "action": {
         "publish": "Publicar",
-        "pause": "Pausar"
+        "pause": "Pausar",
+        "edit": "Editar"
       },
       "locked": {
         "under_review": "En revisión. No puedes cambiarlo mientras lo miramos.",
         "removed": "Retirado por moderación. No se puede volver a publicar."
       }
+    },
+    "editListing": {
+      "title": "Editar anuncio",
+      "save": "Guardar cambios",
+      "saving": "Guardando…"
     },
     "newListing": {
       "step": "Paso {{current}} de {{total}}",
@@ -183,7 +189,9 @@
     "server": "Algo se ha roto de nuestro lado. Inténtalo en un momento.",
     "contract": "Hemos recibido una respuesta que no entendemos. Ya lo estamos mirando.",
     "unknown": "Algo ha salido mal.",
-    "locationRequired": "Necesitamos un punto desde el que buscar. Permite la ubicación o elige una ciudad."
+    "locationRequired": "Necesitamos un punto desde el que buscar. Permite la ubicación o elige una ciudad.",
+    "notOwner": "Este anuncio no es tuyo, así que no puedes cambiarlo.",
+    "validation": "Revisa los campos: hay algo que no cuadra."
   },
   "validation": {
     "email": {

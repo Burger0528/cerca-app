@@ -7,6 +7,7 @@ import type {
   ListingSearchFilters,
   ListingStatusAction,
   MyListing,
+  UpdateListingRequest,
 } from '@cerca/contract';
 
 import type { Coordinates } from '../geo/coordinates';
@@ -26,6 +27,8 @@ export interface ListingGatewayPort {
   search(query: ListingSearchQuery, signal?: AbortSignal): Promise<CursorPage<Listing>>;
   listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>>;
   create(request: CreateListingRequest): Promise<ListingDetail>;
+  detail(listingId: string, signal?: AbortSignal): Promise<ListingDetail>;
+  update(listingId: string, request: UpdateListingRequest): Promise<ListingDetail>;
   setStatus(listingId: string, action: ListingStatusAction): Promise<void>;
 }
 

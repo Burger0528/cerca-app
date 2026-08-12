@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useActor } from '../auth/use-can';
 import { Button } from '../components/button';
 import { ListingListSkeleton } from '../components/listing-card-skeleton';
 import { MyListingRow } from '../components/my-listing-row';
@@ -16,6 +17,7 @@ import { messageKeyForError } from '../i18n/error-message-key';
 export function MyListingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const actor = useActor();
   const locale = useLocale();
   const { fontScale } = useWindowDimensions();
 
@@ -32,16 +34,23 @@ export function MyListingsScreen() {
 
   const keyExtractor = useCallback((listing: MyListing) => listing.id, []);
 
+  const editListing = useCallback(
+    (listingId: string) => router.push(`/listings/${listingId}/edit`),
+    [router],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: MyListing }) => (
       <MyListingRow
         listing={item}
+        actor={actor}
         locale={locale}
         isBusy={item.id === changingId}
         onChangeStatus={changeStatus}
+        onEdit={editListing}
       />
     ),
-    [locale, changingId, changeStatus],
+    [actor, locale, changingId, changeStatus, editListing],
   );
 
   return (

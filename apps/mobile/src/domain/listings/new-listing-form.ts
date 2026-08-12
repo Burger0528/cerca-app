@@ -1,9 +1,16 @@
-import type { CreateListingRequest, GeoPoint, Pricing } from '@cerca/contract';
+import type {
+  CreateListingRequest,
+  GeoPoint,
+  ListingDetail,
+  Pricing,
+  UpdateListingRequest,
+} from '@cerca/contract';
 import {
   LISTING_DESCRIPTION_MAX_LENGTH,
   LISTING_TITLE_MAX_LENGTH,
   LISTING_TITLE_MIN_LENGTH,
   SUPPORTED_CURRENCIES,
+  majorFromMoney,
   moneyFromMajor,
 } from '@cerca/contract';
 import { z } from 'zod';
@@ -104,4 +111,49 @@ export function toCreateListingRequest(
     pricing,
     location,
   };
+}
+
+export function toUpdateListingRequest(form: NewListingForm): UpdateListingRequest | null {
+  const pricing = pricingFrom(form);
+  if (pricing === null) return null;
+
+  return { title: form.title.trim(), description: form.description.trim(), pricing };
+}
+
+/** Lo guardado, de vuelta al formulario. La categoría no se puede cambiar, pero se conserva. */
+export function toNewListingForm(listing: ListingDetail): NewListingForm {
+  const money = priceOf(listing.pricing);
+
+  return {
+    categoryId: listing.categoryId,
+    title: listing.title,
+    description: listing.description,
+    model: listing.pricing.model,
+    currency: currencyOf(money),
+    amount: money === null ? '' : majorFromMoney(money),
+    minimumHours:
+      listing.pricing.model === 'hourly'
+        ? String(listing.pricing.minimumHours)
+        : EMPTY_NEW_LISTING_FORM.minimumHours,
+  };
+}
+
+function priceOf(pricing: Pricing) {
+  switch (pricing.model) {
+    case 'fixed':
+      return pricing.price;
+    case 'hourly':
+      return pricing.hourlyRate;
+    case 'quote':
+      return pricing.startingFrom ?? null;
+    default:
+      return assertNever(pricing);
+  }
+}
+
+function currencyOf(money: { currency: string } | null): NewListingForm['currency'] {
+  const fallback = EMPTY_NEW_LISTING_FORM.currency;
+  if (money === null) return fallback;
+
+  return SUPPORTED_CURRENCIES.find((option) => option === money.currency) ?? fallback;
 }
