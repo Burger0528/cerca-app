@@ -67,14 +67,14 @@ describe('buildListingSearchQuery', () => {
     const query = buildListingSearchQuery(EMPTY_LISTING_FILTERS, {
       kind: 'city',
       city: {
-        id: 'mx-gdl',
-        name: 'Guadalajara',
-        countryCode: 'MX',
-        coordinates: { latitude: 20.6597, longitude: -103.3496 },
+        id: 'co-mde',
+        name: 'Medellín',
+        countryCode: 'CO',
+        coordinates: { latitude: 6.2442, longitude: -75.5812 },
       },
     });
 
-    expect(query.origin).toEqual({ latitude: 20.66, longitude: -103.35 });
+    expect(query.origin).toEqual({ latitude: 6.244, longitude: -75.581 });
   });
 
   it('has no origin at all when nobody has provided one', () => {

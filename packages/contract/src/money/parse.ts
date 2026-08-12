@@ -1,7 +1,8 @@
 import { minorUnitDigits } from './format.ts';
 import type { Money } from './money.ts';
 
-export const SUPPORTED_CURRENCIES = ['MXN', 'USD', 'EUR', 'COP'] as const;
+/** La primera es la que el formulario ofrece por defecto: el mercado donde opera Cerca. */
+export const SUPPORTED_CURRENCIES = ['COP', 'USD', 'EUR', 'MXN'] as const;
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
