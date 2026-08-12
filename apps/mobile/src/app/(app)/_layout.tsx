@@ -25,7 +25,9 @@ export default function AppLayout() {
   }
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    // Sin `tabBarIcon` la barra pinta un glifo de relleno que en Android sale como caja
+    // vacía. La app no usa librería de iconos: las pestañas se distinguen por su texto.
+    <Tabs screenOptions={{ headerShown: false, tabBarIcon: () => null }}>
       <Tabs.Screen name="index" options={{ title: t('search.tabTitle') }} />
       <Tabs.Screen
         name="(provider)"
