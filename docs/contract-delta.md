@@ -78,14 +78,24 @@ declaran fuera de alcance por escrito.
 
 ## 1 quater. Lo que sí quedó confirmado con el servidor delante
 
-| Endpoint               | Forma real                                                                   |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| `GET /me/listings`     | `{ items, nextCursor }`, y cada item es el DETALLE completo, no el resumido  |
-| `POST /listings`       | Crea con `status: "draft"`; devuelve `listingDetailSchema`                   |
-| `POST /listings` body  | `categoryId`, `title` (3–120), `description` (1–4000), `pricing`, `location` |
-| `location`             | `{ lat, lng }` y nada más                                                    |
-| `PATCH /listings/{id}` | Solo `title`, `description` y `pricing`. Ni categoría ni ubicación           |
-| Errores de validación  | 422 con `code: VALIDATION_ERROR` y `errors[{ path, message }]`               |
+| Endpoint               | Forma real                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `GET /me/listings`     | `{ items, nextCursor }`, y cada item es el DETALLE completo, no el resumido           |
+| `POST /listings`       | Crea con `status: "draft"`; devuelve `listingDetailSchema`                            |
+| `POST /listings` body  | `categoryId`, `title` (3–120), `description` (1–4000), `pricing`, `location`          |
+| `location`             | `{ lat, lng }` y nada más                                                             |
+| `PATCH /listings/{id}` | Solo `title`, `description` y `pricing`. Ni categoría ni ubicación                    |
+| Errores de validación  | 422 con `code: VALIDATION_ERROR` y `errors[{ path, message }]`                        |
+| Editar lo ajeno        | 403 `LISTING_EDIT_FORBIDDEN` con `reason: not_owner`                                  |
+| `GET /reports`         | `{ items, nextCursor }` de `{ id, listingId, reporterId, reason, status, createdAt }` |
+| Anuncio retirado       | `GET /listings/{id}` responde **404**, no un anuncio con estado `removed`             |
+
+El último punto es para Salvador: en el detalle, "retirado" y "no existe" son la misma
+respuesta del servidor, así que la pantalla no puede distinguirlos.
+
+El backend está en `/Users/usuario/Developer/cerca-api` y su seed
+(`apps/api/prisma/seed.ts`) crea `moderator@cerca.app` y `admin@cerca.app`. Sirven para
+probar los dos ejes de autorización sin tocar la base de datos.
 
 ## 2. El Actor no trae nombre ni correo
 

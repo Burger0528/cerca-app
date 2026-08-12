@@ -17,6 +17,7 @@ import {
   createHttpListingGateway,
 } from './listings/http-listing-gateway';
 import { createExpoLocationAdapter } from './location/expo-location-adapter';
+import { createHttpModerationGateway } from './moderation/http-moderation-gateway';
 import { createHttpAuthGateway } from './session/http-auth-gateway';
 import { createSecureSessionStorage } from './session/secure-session-storage';
 import { createSessionManager } from './session/session-manager';
@@ -63,6 +64,7 @@ export function createServices(options: CreateServicesOptions = {}): Services {
     authGateway: createHttpAuthGateway({ http, now }),
     listingGateway: createHttpListingGateway(http),
     categoryGateway: createHttpCategoryGateway(http),
+    moderationGateway: createHttpModerationGateway(http),
     location: createExpoLocationAdapter(),
     now,
     newIdempotencyKey: randomUUID,

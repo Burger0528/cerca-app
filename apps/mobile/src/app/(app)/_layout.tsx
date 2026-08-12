@@ -1,7 +1,7 @@
 import { Redirect, Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { useHasCapacity } from '../../presentation/auth/use-can';
+import { useCan, useHasCapacity } from '../../presentation/auth/use-can';
 import { useSession } from '../../presentation/providers/session-provider';
 
 /**
@@ -19,6 +19,7 @@ export default function AppLayout() {
   const { state } = useSession();
   const { t } = useTranslation();
   const isProvider = useHasCapacity('provider');
+  const isModerator = useCan('report:resolve');
 
   if (state.status !== 'signed-in') {
     return <Redirect href="/sign-in" />;
@@ -32,6 +33,10 @@ export default function AppLayout() {
       <Tabs.Screen
         name="(provider)"
         options={{ title: t('provider.tabTitle'), href: isProvider ? undefined : null }}
+      />
+      <Tabs.Screen
+        name="(moderation)"
+        options={{ title: t('moderation.tabTitle'), href: isModerator ? undefined : null }}
       />
       <Tabs.Screen name="account" options={{ title: t('account.tabTitle') }} />
     </Tabs>

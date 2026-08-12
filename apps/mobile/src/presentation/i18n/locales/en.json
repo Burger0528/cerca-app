@@ -112,6 +112,28 @@
       }
     }
   },
+  "moderation": {
+    "tabTitle": "Reports",
+    "reports": {
+      "title": "Reported listings",
+      "empty": {
+        "title": "Nothing to review",
+        "body": "Reports from the community will land here."
+      },
+      "status": {
+        "open": "Waiting for a decision",
+        "resolved": "Listing removed",
+        "dismissed": "Left as it was"
+      },
+      "action": {
+        "remove": "Remove listing",
+        "dismiss": "Dismiss"
+      },
+      "a11y": {
+        "row": "Report: {{reason}}. {{status}}."
+      }
+    }
+  },
   "search": {
     "tabTitle": "Search",
     "title": "Near you",

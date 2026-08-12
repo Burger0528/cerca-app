@@ -112,6 +112,28 @@
       }
     }
   },
+  "moderation": {
+    "tabTitle": "Denuncias",
+    "reports": {
+      "title": "Anuncios denunciados",
+      "empty": {
+        "title": "Nada que revisar",
+        "body": "Las denuncias de la comunidad aparecerán aquí."
+      },
+      "status": {
+        "open": "Pendiente de decisión",
+        "resolved": "Anuncio retirado",
+        "dismissed": "Se dejó como estaba"
+      },
+      "action": {
+        "remove": "Retirar anuncio",
+        "dismiss": "Descartar"
+      },
+      "a11y": {
+        "row": "Denuncia: {{reason}}. {{status}}."
+      }
+    }
+  },
   "search": {
     "tabTitle": "Buscar",
     "title": "Cerca de ti",
