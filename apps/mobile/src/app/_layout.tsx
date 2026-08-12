@@ -5,9 +5,11 @@
  * la vez: aquí se construyen las implementaciones reales y se inyectan hacia abajo. De
  * `_layout` para dentro, nadie vuelve a nombrar a Expo.
  */
-import { Stack } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
+import { useColorScheme } from 'react-native';
 
 import '../global.css';
 
@@ -37,6 +39,10 @@ export default function RootLayout() {
 
   return (
     <AppProviders services={services} queryClient={queryClient}>
+      {/* Sin esto, los iconos del sistema se quedan en blanco sobre el fondo claro de la
+          app y desaparecen. `auto` los pinta según el esquema de color, que es la misma
+          señal que decide el color de las superficies en `global.css`. */}
+      <StatusBar style="auto" />
       <RootNavigator />
     </AppProviders>
   );
@@ -54,6 +60,11 @@ function RootNavigator() {
   // y un `useMemo` detrás de un early return cambia de posición entre renders.
   const screenOptions = useMemo(() => ({ headerShown: false }), []);
 
+  // La barra de pestañas y las cabeceras las pinta React Navigation con SU tema, que no
+  // conoce las variables de `global.css`. Sin esto, en modo oscuro la app va oscura y la
+  // barra de abajo se queda blanca.
+  const scheme = useColorScheme();
+
   useEffect(() => {
     if (!isRestoring) void SplashScreen.hideAsync();
   }, [isRestoring]);
@@ -64,10 +75,15 @@ function RootNavigator() {
   if (isRestoring) return null;
 
   return (
-    <Stack screenOptions={screenOptions}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(app)" />
-      <Stack.Screen name="city" options={{ presentation: 'modal', headerShown: true, title: '' }} />
-    </Stack>
+    <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={screenOptions}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(app)" />
+        <Stack.Screen
+          name="city"
+          options={{ presentation: 'modal', headerShown: true, title: '' }}
+        />
+      </Stack>
+    </ThemeProvider>
   );
 }
