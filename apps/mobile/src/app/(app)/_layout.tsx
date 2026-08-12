@@ -38,6 +38,8 @@ export default function AppLayout() {
         name="(moderation)"
         options={{ title: t('moderation.tabTitle'), href: isModerator ? undefined : null }}
       />
+      {/* El detalle conserva la barra de pestañas pero no ES una pestaña. */}
+      <Tabs.Screen name="listings" options={{ href: null }} />
       <Tabs.Screen name="account" options={{ title: t('account.tabTitle') }} />
     </Tabs>
   );

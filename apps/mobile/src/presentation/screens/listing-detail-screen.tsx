@@ -13,22 +13,19 @@
  * se inventa en el cliente.
  */
 import { formatDistance } from '@cerca/contract';
+import * as Linking from 'expo-linking';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Share, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import {
-  ContractViolationError,
-  HttpError,
-  NetworkError,
-  TimeoutError,
-} from '../../domain/errors/app-error';
+import { HttpError } from '../../domain/errors/app-error';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useLocale } from '../hooks/use-locale';
-import type { FeedbackMessageKey } from '../i18n/message-keys';
+import { messageKeyForError } from '../i18n/error-message-key';
 
 export function ListingDetailScreen() {
   const { id, distanceMeters } = useLocalSearchParams<{
@@ -63,7 +60,9 @@ export function ListingDetailScreen() {
 
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-surface px-8">
-        <Text className="text-center text-base text-muted">{t(messageKeyFor(detail.error))}</Text>
+        <Text className="text-center text-base text-muted">
+          {t(messageKeyForError(detail.error))}
+        </Text>
         <Button variant="secondary" onPress={() => void detail.refetch()}>
           {t('common.retry')}
         </Button>
@@ -80,7 +79,7 @@ export function ListingDetailScreen() {
       : formatDistance({ meters: Number(distanceMeters) }, locale);
 
   return (
-    <View className="flex-1 gap-3 bg-surface px-4 py-4">
+    <SafeAreaView className="flex-1 gap-3 bg-surface px-4 py-4" edges={['top']}>
       <View className="flex-row items-center gap-2">
         <Text className="flex-1 text-xl font-semibold text-foreground">{listing.title}</Text>
         {listing.status === 'published' ? null : <StatusBadge status={listing.status} />}
@@ -96,26 +95,20 @@ export function ListingDetailScreen() {
 
       <Button
         variant="secondary"
+        className="self-start"
         onPress={() => {
           void Share.share({
             message: t('listing.detail.shareMessage', {
               title: listing.title,
-              url: `cerca://listing/${listing.id}`,
+              // Construido por expo-linking a partir del esquema y de la RUTA REAL. Escrito
+              // a mano era `cerca://listing/…`, en singular, y no abría nada.
+              url: Linking.createURL(`/listings/${listing.id}`),
             }),
           });
         }}
       >
         {t('listing.detail.share')}
       </Button>
-    </View>
+    </SafeAreaView>
   );
-}
-
-function messageKeyFor(error: unknown): FeedbackMessageKey {
-  if (error instanceof NetworkError) return 'errors.network';
-  if (error instanceof TimeoutError) return 'errors.timeout';
-  if (error instanceof ContractViolationError) return 'errors.contract';
-  if (error instanceof HttpError) return error.status >= 500 ? 'errors.server' : 'errors.unknown';
-
-  return 'errors.unknown';
 }
