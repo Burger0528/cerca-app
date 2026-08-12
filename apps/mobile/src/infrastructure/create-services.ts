@@ -24,11 +24,6 @@ import { createSecureSessionStorage } from './session/secure-session-storage';
 import { createSessionManager } from './session/session-manager';
 import { createWebSessionStorage } from './session/web-session-storage';
 
-export interface CreateServicesOptions {
-  /** Se dispara cuando el refresh token muere: la app tiene que mandar a login. */
-  readonly onSessionLost?: () => void;
-}
-
 /**
  * El llavero solo existe en el teléfono.
  *
@@ -44,13 +39,12 @@ function createPlatformSessionStorage(): SessionStoragePort {
   return Platform.OS === 'web' ? createWebSessionStorage() : createSecureSessionStorage();
 }
 
-export function createServices(options: CreateServicesOptions = {}): Services {
+export function createServices(): Services {
   const now = Date.now;
 
   const sessionManager = createSessionManager({
     storage: createPlatformSessionStorage(),
     now,
-    ...(options.onSessionLost === undefined ? {} : { onSessionLost: options.onSessionLost }),
   });
 
   // El cliente pregunta el token al manager en cada petición en vez de recibir una copia.

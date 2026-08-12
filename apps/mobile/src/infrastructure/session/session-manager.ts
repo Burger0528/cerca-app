@@ -20,8 +20,6 @@ export interface SessionManagerDependencies {
   readonly timeoutMs?: number;
   readonly now?: () => number;
   readonly fetchImpl?: typeof fetch;
-  /** Se llama cuando el refresh token muere. La app tiene que echar al usuario. */
-  readonly onSessionLost?: () => void;
 }
 
 export function createSessionManager(deps: SessionManagerDependencies): SessionManagerPort {
@@ -35,6 +33,8 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
 
   /** El single-flight: mientras esta promesa exista, nadie más lanza un refresh. */
   let inFlight: Promise<string | null> | null = null;
+
+  const sessionLostListeners = new Set<() => void>();
 
   async function performRefresh(refreshToken: string): Promise<string | null> {
     let response: Response;
@@ -114,7 +114,7 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
           if (token === null) {
             await deps.storage.clear();
             current = null;
-            deps.onSessionLost?.();
+            for (const listener of sessionLostListeners) listener();
           }
           return token;
         })
@@ -133,6 +133,14 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
     async clear(): Promise<void> {
       current = null;
       await deps.storage.clear();
+    },
+
+    onSessionLost(listener: () => void): () => void {
+      sessionLostListeners.add(listener);
+
+      return () => {
+        sessionLostListeners.delete(listener);
+      };
     },
   };
 }

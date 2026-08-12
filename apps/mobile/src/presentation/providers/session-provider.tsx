@@ -87,6 +87,20 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     // un `actor` nuevo, y depender de él sería un bucle de revalidación infinito.
   }, [state.status, dependencies]);
 
+  /**
+   * El refresh token ha muerto: el llavero ya está vacío, pero la interfaz seguiría
+   * creyendo que hay sesión hasta el siguiente arranque. Sin esto, la app enseña pantallas
+   * privadas que solo devuelven 401.
+   */
+  useEffect(
+    () =>
+      dependencies.sessionManager.onSessionLost(() => {
+        setState(SIGNED_OUT);
+        queryClient.clear();
+      }),
+    [dependencies, queryClient],
+  );
+
   const signIn = useCallback(
     async (credentials: SignInRequest) => {
       setState(await sessionUseCases.signIn(dependencies, credentials));

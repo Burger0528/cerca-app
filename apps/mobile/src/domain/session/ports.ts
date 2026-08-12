@@ -46,4 +46,12 @@ export interface SessionManagerPort {
   refresh(): Promise<string | null>;
   adopt(session: StoredSession): Promise<void>;
   clear(): Promise<void>;
+  /**
+   * Avisa cuando el refresh token muere y la sesión ya no se puede salvar. Devuelve la
+   * función para dejar de escuchar.
+   *
+   * Es una suscripción y no un callback de construcción porque quien necesita enterarse
+   * —el estado de sesión de la UI— se monta después de que los servicios existan.
+   */
+  onSessionLost(listener: () => void): () => void;
 }
