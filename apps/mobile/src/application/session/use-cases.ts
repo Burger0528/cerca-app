@@ -57,8 +57,14 @@ export async function signUp(
   return signedIn(session.actor);
 }
 
+/**
+ * El refresh no es opcional: las capacidades viajan en los claims del access token, así que
+ * sin renovarlo el servidor sigue viendo una cuenta que no es proveedora y rechaza publicar.
+ */
 export async function becomeProvider(deps: SessionDependencies): Promise<SessionState> {
   const actor = await deps.authGateway.becomeProvider();
+
+  await deps.sessionManager.refresh();
   const stored = await deps.sessionManager.restore();
 
   if (stored !== null) await deps.sessionManager.adopt({ ...stored, actor });

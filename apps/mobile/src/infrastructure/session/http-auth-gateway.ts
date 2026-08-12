@@ -53,9 +53,10 @@ export function createHttpAuthGateway(deps: AuthGatewayDependencies): AuthGatewa
 
     me: fetchActor,
 
-    async becomeProvider(): Promise<Actor> {
-      await deps.http.requestVoid({ path: '/me/capacities/provider', method: 'POST' });
-      return fetchActor();
+    becomeProvider(): Promise<Actor> {
+      // El actor sale del cuerpo de este POST y no de un `GET /me` posterior: `/me` responde
+      // con los claims del access token, que todavía no incluyen la capacidad recién creada.
+      return deps.http.request({ path: '/me/capacities/provider', method: 'POST' }, actorSchema);
     },
 
     async signOut(refreshToken: string): Promise<void> {

@@ -32,6 +32,28 @@ Funciona y está probado, pero **es un rodeo**. Que el servidor mandara `expires
 una línea suya y ahorraría a la app un decodificador de base64 escrito a mano. Merece la pena
 pedirlo.
 
+## 1 bis. `GET /me` devuelve los claims del token, no la base de datos · comprobado con el backend delante
+
+Sesión real contra `192.168.0.7:3333`, sprint 2:
+
+| Petición                                   | Respuesta                                |
+| ------------------------------------------ | ---------------------------------------- |
+| `POST /me/capacities/provider`             | 200 · `capacities: [customer, provider]` |
+| `GET /me` acto seguido, con el mismo token | `capacities: [customer]`                 |
+| `POST /auth/refresh` y otra vez `GET /me`  | `capacities: [customer, provider]`       |
+
+`/me` refleja el JWT, y las capacidades viajan dentro del JWT. Consecuencias para la app:
+
+- El actor de "hazte proveedor" se lee del **cuerpo del POST**, nunca de un `GET /me` posterior.
+- Después hay que **renovar el token**, o el servidor sigue viendo una cuenta sin la capacidad
+  y rechaza publicar. Lo hace `becomeProvider()` en `application/session/use-cases.ts`.
+- El comentario de `performRefresh` que decía "el actor no cambia al renovar" era falso: al
+  renovar es justo cuando cambia.
+
+Lo que habría que pedir al backend: que `/me` lea la fila de la base de datos. Mientras eso no
+pase, cualquier cambio de capacidad o de rol de plataforma tarda en verse lo que tarde el
+access token en caducar.
+
 ## 2. El Actor no trae nombre ni correo
 
 `toActorResponse` devuelve tres campos. La app no puede saludar a nadie por su nombre ni
