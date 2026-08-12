@@ -22,6 +22,13 @@ export const VALIDATION_MESSAGE_KEYS = [
   'validation.displayName.required',
   'validation.displayName.tooLong',
   'validation.password.tooLong',
+  'validation.category.required',
+  'validation.title.tooShort',
+  'validation.title.tooLong',
+  'validation.description.required',
+  'validation.description.tooLong',
+  'validation.amount.invalid',
+  'validation.minimumHours.invalid',
 ] as const;
 
 export type ValidationMessageKey = (typeof VALIDATION_MESSAGE_KEYS)[number];

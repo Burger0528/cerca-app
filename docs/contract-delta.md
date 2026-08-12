@@ -54,6 +54,39 @@ Lo que habría que pedir al backend: que `/me` lea la fila de la base de datos. 
 pase, cualquier cambio de capacidad o de rol de plataforma tarda en verse lo que tarde el
 access token en caducar.
 
+## 1 ter. Dos endpoints del enunciado NO EXISTEN en la API · bloquean entregables
+
+Sacado de `/docs-json` del backend, que expone la lista completa: 29 rutas, y entre ellas
+no está ninguna de estas dos.
+
+| Ruta del enunciado                        | Realidad | Qué bloquea                              |
+| ----------------------------------------- | -------- | ---------------------------------------- |
+| `POST /listings/{id}/photos:presign`      | 404      | El paso de fotos de US-03, de Jorge      |
+| `POST` y `DELETE /listings/{id}/favorite` | no está  | El favorito optimista de S1, de Salvador |
+
+**Consecuencia para US-03:** el asistente de publicación tiene sus cuatro pasos —categoría,
+detalles, precio y zona— pero **no hay paso de fotos**, porque no hay dónde subirlas. El
+criterio "las fotos suben" no se puede cumplir sin trabajo del backend. Tampoco sirve de nada
+reducir la imagen con `expo-image-manipulator`, así que esa dependencia no se ha añadido.
+
+**Consecuencia para Salvador:** su pieza de mutación optimista con rollback se queda sin el
+caso que la iba a demostrar. Hay otro camino: publicar/pausar en "Mis anuncios" ya la usa, y
+las acciones de reserva también valen.
+
+Hay que decidirlo con el backend: o aparecen los dos endpoints, o los dos entregables se
+declaran fuera de alcance por escrito.
+
+## 1 quater. Lo que sí quedó confirmado con el servidor delante
+
+| Endpoint               | Forma real                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `GET /me/listings`     | `{ items, nextCursor }`, y cada item es el DETALLE completo, no el resumido  |
+| `POST /listings`       | Crea con `status: "draft"`; devuelve `listingDetailSchema`                   |
+| `POST /listings` body  | `categoryId`, `title` (3–120), `description` (1–4000), `pricing`, `location` |
+| `location`             | `{ lat, lng }` y nada más                                                    |
+| `PATCH /listings/{id}` | Solo `title`, `description` y `pricing`. Ni categoría ni ubicación           |
+| Errores de validación  | 422 con `code: VALIDATION_ERROR` y `errors[{ path, message }]`               |
+
 ## 2. El Actor no trae nombre ni correo
 
 `toActorResponse` devuelve tres campos. La app no puede saludar a nadie por su nombre ni

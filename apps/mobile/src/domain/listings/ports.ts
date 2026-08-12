@@ -1,7 +1,9 @@
 import type {
   Category,
+  CreateListingRequest,
   CursorPage,
   Listing,
+  ListingDetail,
   ListingSearchFilters,
   ListingStatusAction,
   MyListing,
@@ -23,6 +25,7 @@ export interface ListingSearchQuery {
 export interface ListingGatewayPort {
   search(query: ListingSearchQuery, signal?: AbortSignal): Promise<CursorPage<Listing>>;
   listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>>;
+  create(request: CreateListingRequest): Promise<ListingDetail>;
   setStatus(listingId: string, action: ListingStatusAction): Promise<void>;
 }
 

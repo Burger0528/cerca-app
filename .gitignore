@@ -40,6 +40,9 @@ yarn-error.*
 .eslintcache
 coverage/
 
+# IDE
+.idea/
+
 # macOS
 .DS_Store
 *.pem
