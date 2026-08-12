@@ -35,6 +35,11 @@ export const categoryKeys = {
   list: () => [...categoryKeys.all, 'list'] as const,
 } as const;
 
+export const reportKeys = {
+  all: ['reports'] as const,
+  list: () => [...reportKeys.all, 'list'] as const,
+} as const;
+
 export const sessionKeys = {
   all: ['session'] as const,
   me: () => [...sessionKeys.all, 'me'] as const,

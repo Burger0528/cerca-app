@@ -28,6 +28,32 @@ vez. Están en `.gitignore` a propósito: se regeneran desde `app.json` con
 `npm run -w mobile prebuild`, y versionarlas es la forma más rápida de que los dos
 tengamos configuraciones nativas distintas sin saberlo.
 
+## Instalar una build de QA
+
+`eas.json` tiene tres perfiles: `development` (dev client), `preview` (APK instalable por
+enlace, iOS ad-hoc) y `production`. Falta un paso que necesita cuenta:
+
+```bash
+cd apps/mobile
+npx eas-cli login
+npx eas-cli init                 # crea el proyecto y escribe extra.eas.projectId
+npx eas-cli env:create --name EXPO_PUBLIC_API_URL --value https://tu-backend/v1
+npx eas-cli build --profile preview --platform android   # da el enlace y el QR
+```
+
+Tres cosas que hay que saber antes de la primera build:
+
+- **La URL de la API no está en `eas.json` a propósito.** Una IP de red local caduca en
+  cuanto cambias de wifi, y committeada engaña. Va como variable de entorno de EAS.
+- **`usesCleartextTraffic` está activado** en `app.json`. Sin eso, el APK de preview contra
+  un backend `http://` instala, abre y no carga nada, sin error visible. Para producción,
+  el backend va en HTTPS y esto se quita.
+- **iOS necesita cuenta de Apple Developer de pago** y los UDID de los iPhone donde se vaya
+  a instalar, o TestFlight. Sin eso el perfil `preview` solo sale en Android.
+
+Las actualizaciones por OTA (`expo-updates`) quedan pendientes: necesitan el `projectId`
+que crea `eas init`, así que se instalan después de ese paso.
+
 ## Verificar
 
 ```bash

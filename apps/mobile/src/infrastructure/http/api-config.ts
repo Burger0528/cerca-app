@@ -6,8 +6,9 @@
  * Una clave de API en esta constante sería una clave de API regalada. `verify.sh` tiene un
  * paso que lo comprueba.
  */
+/** El puerto de cerca-api es el 3333, y el `/v1` va en la base. Ver `.env.example`. */
 export const API_BASE_URL = normalizeBaseUrl(
-  process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000',
+  process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3333/v1',
 );
 
 /**

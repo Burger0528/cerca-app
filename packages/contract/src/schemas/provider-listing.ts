@@ -6,6 +6,7 @@ import { listingStatusSchema } from './listing.ts';
 
 export const myListingSchema = z.object({
   id: z.uuid(),
+  ownerId: z.uuid(),
   title: z.string(),
   priceFrom: moneySchema.nullable(),
   status: listingStatusSchema,

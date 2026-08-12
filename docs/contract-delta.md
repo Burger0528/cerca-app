@@ -32,6 +32,71 @@ Funciona y está probado, pero **es un rodeo**. Que el servidor mandara `expires
 una línea suya y ahorraría a la app un decodificador de base64 escrito a mano. Merece la pena
 pedirlo.
 
+## 1 bis. `GET /me` devuelve los claims del token, no la base de datos · comprobado con el backend delante
+
+Sesión real contra `192.168.0.7:3333`, sprint 2:
+
+| Petición                                   | Respuesta                                |
+| ------------------------------------------ | ---------------------------------------- |
+| `POST /me/capacities/provider`             | 200 · `capacities: [customer, provider]` |
+| `GET /me` acto seguido, con el mismo token | `capacities: [customer]`                 |
+| `POST /auth/refresh` y otra vez `GET /me`  | `capacities: [customer, provider]`       |
+
+`/me` refleja el JWT, y las capacidades viajan dentro del JWT. Consecuencias para la app:
+
+- El actor de "hazte proveedor" se lee del **cuerpo del POST**, nunca de un `GET /me` posterior.
+- Después hay que **renovar el token**, o el servidor sigue viendo una cuenta sin la capacidad
+  y rechaza publicar. Lo hace `becomeProvider()` en `application/session/use-cases.ts`.
+- El comentario de `performRefresh` que decía "el actor no cambia al renovar" era falso: al
+  renovar es justo cuando cambia.
+
+Lo que habría que pedir al backend: que `/me` lea la fila de la base de datos. Mientras eso no
+pase, cualquier cambio de capacidad o de rol de plataforma tarda en verse lo que tarde el
+access token en caducar.
+
+## 1 ter. Dos endpoints del enunciado NO EXISTEN en la API · bloquean entregables
+
+Sacado de `/docs-json` del backend, que expone la lista completa: 29 rutas, y entre ellas
+no está ninguna de estas dos.
+
+| Ruta del enunciado                        | Realidad | Qué bloquea                              |
+| ----------------------------------------- | -------- | ---------------------------------------- |
+| `POST /listings/{id}/photos:presign`      | 404      | El paso de fotos de US-03, de Jorge      |
+| `POST` y `DELETE /listings/{id}/favorite` | no está  | El favorito optimista de S1, de Salvador |
+
+**Consecuencia para US-03:** el asistente de publicación tiene sus cuatro pasos —categoría,
+detalles, precio y zona— pero **no hay paso de fotos**, porque no hay dónde subirlas. El
+criterio "las fotos suben" no se puede cumplir sin trabajo del backend. Tampoco sirve de nada
+reducir la imagen con `expo-image-manipulator`, así que esa dependencia no se ha añadido.
+
+**Consecuencia para Salvador:** su pieza de mutación optimista con rollback se queda sin el
+caso que la iba a demostrar. Hay otro camino: publicar/pausar en "Mis anuncios" ya la usa, y
+las acciones de reserva también valen.
+
+Hay que decidirlo con el backend: o aparecen los dos endpoints, o los dos entregables se
+declaran fuera de alcance por escrito.
+
+## 1 quater. Lo que sí quedó confirmado con el servidor delante
+
+| Endpoint               | Forma real                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `GET /me/listings`     | `{ items, nextCursor }`, y cada item es el DETALLE completo, no el resumido           |
+| `POST /listings`       | Crea con `status: "draft"`; devuelve `listingDetailSchema`                            |
+| `POST /listings` body  | `categoryId`, `title` (3–120), `description` (1–4000), `pricing`, `location`          |
+| `location`             | `{ lat, lng }` y nada más                                                             |
+| `PATCH /listings/{id}` | Solo `title`, `description` y `pricing`. Ni categoría ni ubicación                    |
+| Errores de validación  | 422 con `code: VALIDATION_ERROR` y `errors[{ path, message }]`                        |
+| Editar lo ajeno        | 403 `LISTING_EDIT_FORBIDDEN` con `reason: not_owner`                                  |
+| `GET /reports`         | `{ items, nextCursor }` de `{ id, listingId, reporterId, reason, status, createdAt }` |
+| Anuncio retirado       | `GET /listings/{id}` responde **404**, no un anuncio con estado `removed`             |
+
+El último punto es para Salvador: en el detalle, "retirado" y "no existe" son la misma
+respuesta del servidor, así que la pantalla no puede distinguirlos.
+
+El backend está en `/Users/usuario/Developer/cerca-api` y su seed
+(`apps/api/prisma/seed.ts`) crea `moderator@cerca.app` y `admin@cerca.app`. Sirven para
+probar los dos ejes de autorización sin tocar la base de datos.
+
 ## 2. El Actor no trae nombre ni correo
 
 `toActorResponse` devuelve tres campos. La app no puede saludar a nadie por su nombre ni

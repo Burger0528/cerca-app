@@ -57,13 +57,80 @@
         "title": "Todavía no has publicado nada",
         "body": "Tus anuncios aparecerán aquí en cuanto crees el primero."
       },
+      "create": "Publicar un anuncio",
       "action": {
         "publish": "Publicar",
-        "pause": "Pausar"
+        "pause": "Pausar",
+        "edit": "Editar"
       },
       "locked": {
         "under_review": "En revisión. No puedes cambiarlo mientras lo miramos.",
         "removed": "Retirado por moderación. No se puede volver a publicar."
+      }
+    },
+    "editListing": {
+      "title": "Editar anuncio",
+      "save": "Guardar cambios",
+      "saving": "Guardando…"
+    },
+    "newListing": {
+      "step": "Paso {{current}} de {{total}}",
+      "next": "Continuar",
+      "back": "Atrás",
+      "publish": "Publicar",
+      "publishing": "Publicando…",
+      "category": {
+        "heading": "¿Qué ofreces?",
+        "label": "Elige una categoría"
+      },
+      "details": {
+        "heading": "Descríbelo",
+        "title": "Título",
+        "titlePlaceholder": "Clases de guitarra para principiantes",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Qué haces, qué incluye y cómo trabajas."
+      },
+      "pricing": {
+        "heading": "¿Cómo cobras?",
+        "model": "Modelo de precio",
+        "models": {
+          "fixed": "Precio fijo",
+          "hourly": "Por hora",
+          "quote": "A presupuesto"
+        },
+        "currency": "Moneda",
+        "amount": "Importe",
+        "minimumHours": "Horas mínimas",
+        "quoteHint": "El precio lo acuerdas con cada cliente, así que aquí no hay nada que poner."
+      },
+      "location": {
+        "heading": "¿Dónde trabajas?",
+        "label": "Tu anuncio aparecerá cerca de",
+        "device": "Tu ubicación actual",
+        "missing": "Todavía sin ubicación",
+        "hint": "Quien busque cerca lo verá antes."
+      }
+    }
+  },
+  "moderation": {
+    "tabTitle": "Denuncias",
+    "reports": {
+      "title": "Anuncios denunciados",
+      "empty": {
+        "title": "Nada que revisar",
+        "body": "Las denuncias de la comunidad aparecerán aquí."
+      },
+      "status": {
+        "open": "Pendiente de decisión",
+        "resolved": "Anuncio retirado",
+        "dismissed": "Se dejó como estaba"
+      },
+      "action": {
+        "remove": "Retirar anuncio",
+        "dismiss": "Descartar"
+      },
+      "a11y": {
+        "row": "Denuncia: {{reason}}. {{status}}."
       }
     }
   },
@@ -144,7 +211,9 @@
     "server": "Algo se ha roto de nuestro lado. Inténtalo en un momento.",
     "contract": "Hemos recibido una respuesta que no entendemos. Ya lo estamos mirando.",
     "unknown": "Algo ha salido mal.",
-    "locationRequired": "Necesitamos un punto desde el que buscar. Permite la ubicación o elige una ciudad."
+    "locationRequired": "Necesitamos un punto desde el que buscar. Permite la ubicación o elige una ciudad.",
+    "notOwner": "Este anuncio no es tuyo, así que no puedes cambiarlo.",
+    "validation": "Revisa los campos: hay algo que no cuadra."
   },
   "validation": {
     "email": {
@@ -158,6 +227,23 @@
     "displayName": {
       "required": "Escribe tu nombre.",
       "tooLong": "Ese nombre es demasiado largo."
+    },
+    "category": {
+      "required": "Elige una categoría."
+    },
+    "title": {
+      "tooShort": "Al menos 3 caracteres.",
+      "tooLong": "Ese título es demasiado largo."
+    },
+    "description": {
+      "required": "Describe lo que ofreces.",
+      "tooLong": "Esa descripción es demasiado larga."
+    },
+    "amount": {
+      "invalid": "Escribe un importe, como 450."
+    },
+    "minimumHours": {
+      "invalid": "Entre 1 y 12 horas."
     },
     "currency": {
       "invalid": "Divisa no soportada."

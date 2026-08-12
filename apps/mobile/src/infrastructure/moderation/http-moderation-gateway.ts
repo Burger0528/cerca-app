@@ -1,0 +1,36 @@
+import { cursorPageSchema, reportSchema } from '@cerca/contract';
+import type {
+  CursorPage,
+  ModerateListingRequest,
+  Report,
+  ResolveReportRequest,
+} from '@cerca/contract';
+
+import type { ModerationGatewayPort } from '../../domain/moderation/ports';
+import type { HttpClient } from '../http/http-client';
+
+const reportPageSchema = cursorPageSchema(reportSchema);
+
+export function createHttpModerationGateway(http: HttpClient): ModerationGatewayPort {
+  return {
+    listReports(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<Report>> {
+      return http.request({ path: '/reports', query: { cursor }, signal }, reportPageSchema);
+    },
+
+    resolveReport(reportId: string, request: ResolveReportRequest): Promise<void> {
+      return http.requestVoid({
+        path: `/reports/${reportId}/resolve`,
+        method: 'POST',
+        body: request,
+      });
+    },
+
+    moderateListing(listingId: string, request: ModerateListingRequest): Promise<void> {
+      return http.requestVoid({
+        path: `/listings/${listingId}/moderate`,
+        method: 'POST',
+        body: request,
+      });
+    },
+  };
+}

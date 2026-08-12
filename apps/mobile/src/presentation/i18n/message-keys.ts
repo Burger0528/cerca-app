@@ -22,6 +22,13 @@ export const VALIDATION_MESSAGE_KEYS = [
   'validation.displayName.required',
   'validation.displayName.tooLong',
   'validation.password.tooLong',
+  'validation.category.required',
+  'validation.title.tooShort',
+  'validation.title.tooLong',
+  'validation.description.required',
+  'validation.description.tooLong',
+  'validation.amount.invalid',
+  'validation.minimumHours.invalid',
 ] as const;
 
 export type ValidationMessageKey = (typeof VALIDATION_MESSAGE_KEYS)[number];
@@ -37,6 +44,8 @@ export type FeedbackMessageKey =
   | 'auth.errors.accountSuspended'
   | 'auth.errors.sessionExpired'
   | 'errors.locationRequired'
+  | 'errors.notOwner'
+  | 'errors.validation'
   | 'errors.network'
   | 'errors.timeout'
   | 'errors.server'
@@ -62,6 +71,10 @@ const CODE_TO_MESSAGE_KEY: Readonly<Record<string, FeedbackMessageKey>> = {
   REFRESH_TOKEN_REUSED: 'auth.errors.sessionExpired',
   LOCATION_REQUIRED: 'errors.locationRequired',
   INTERNAL_ERROR: 'errors.server',
+  // 403 con `reason: not_owner`. Comprobado contra el servidor: la app enseña la regla en vez
+  // de un genérico cuando alguien fuerza la edición de un anuncio ajeno.
+  LISTING_EDIT_FORBIDDEN: 'errors.notOwner',
+  VALIDATION_ERROR: 'errors.validation',
 };
 
 export function messageKeyForReason(code: string | null | undefined): FeedbackMessageKey {

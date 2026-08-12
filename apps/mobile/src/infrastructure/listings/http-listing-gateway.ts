@@ -1,10 +1,19 @@
-import { categorySchema, cursorPageSchema, listingSchema, myListingSchema } from '@cerca/contract';
+import {
+  categorySchema,
+  cursorPageSchema,
+  listingDetailSchema,
+  listingSchema,
+  myListingSchema,
+} from '@cerca/contract';
 import type {
   Category,
+  CreateListingRequest,
   CursorPage,
   Listing,
+  ListingDetail,
   ListingStatusAction,
   MyListing,
+  UpdateListingRequest,
 } from '@cerca/contract';
 import { z } from 'zod';
 
@@ -36,6 +45,24 @@ export function createHttpListingGateway(http: HttpClient): ListingGatewayPort {
 
     listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>> {
       return http.request({ path: '/me/listings', query: { cursor }, signal }, myListingPageSchema);
+    },
+
+    create(request: CreateListingRequest): Promise<ListingDetail> {
+      return http.request(
+        { path: '/listings', method: 'POST', body: request },
+        listingDetailSchema,
+      );
+    },
+
+    detail(listingId: string, signal?: AbortSignal): Promise<ListingDetail> {
+      return http.request({ path: `/listings/${listingId}`, signal }, listingDetailSchema);
+    },
+
+    update(listingId: string, request: UpdateListingRequest): Promise<ListingDetail> {
+      return http.request(
+        { path: `/listings/${listingId}`, method: 'PATCH', body: request },
+        listingDetailSchema,
+      );
     },
 
     setStatus(listingId: string, action: ListingStatusAction): Promise<void> {

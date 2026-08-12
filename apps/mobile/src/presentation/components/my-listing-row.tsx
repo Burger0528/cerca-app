@@ -1,4 +1,5 @@
-import type { ListingStatus, ListingStatusAction, MyListing } from '@cerca/contract';
+import type { Actor, ListingStatus, ListingStatusAction, MyListing } from '@cerca/contract';
+import { canEditListing } from '@cerca/contract';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -19,16 +20,26 @@ function actionFor(status: ListingStatus): ListingStatusAction {
 
 export interface MyListingRowProps {
   readonly listing: MyListing;
+  readonly actor: Actor | null;
   readonly locale: string;
   readonly isBusy: boolean;
   readonly onChangeStatus: (listingId: string, action: ListingStatusAction) => void;
+  readonly onEdit: (listingId: string) => void;
 }
 
-function MyListingRowComponent({ listing, locale, isBusy, onChangeStatus }: MyListingRowProps) {
+function MyListingRowComponent({
+  listing,
+  actor,
+  locale,
+  isBusy,
+  onChangeStatus,
+  onEdit,
+}: MyListingRowProps) {
   const { t } = useTranslation();
 
   const locked = lockedStatusOf(listing.status);
   const action = actionFor(listing.status);
+  const edit = actor === null ? null : canEditListing(actor, listing);
 
   return (
     <View className="gap-2 border-b border-subtle px-4 py-4">
@@ -43,16 +54,27 @@ function MyListingRowComponent({ listing, locale, isBusy, onChangeStatus }: MyLi
         {priceFromLabel(listing.priceFrom, locale, t)}
       </Text>
 
-      {locked === null ? (
-        <Button
-          variant="secondary"
-          className="self-start"
-          isLoading={isBusy}
-          onPress={() => onChangeStatus(listing.id, action)}
-        >
-          {t(`provider.myListings.action.${action}`)}
-        </Button>
-      ) : (
+      <View className="flex-row flex-wrap gap-2">
+        {locked === null ? (
+          <Button
+            variant="secondary"
+            isLoading={isBusy}
+            onPress={() => onChangeStatus(listing.id, action)}
+          >
+            {t(`provider.myListings.action.${action}`)}
+          </Button>
+        ) : null}
+
+        {/* Sin capacidad o sin propiedad el botón no existe; bloqueado por estado sí se pinta,
+            deshabilitado, para que la regla se pueda leer. */}
+        {edit === null || (!edit.ok && edit.kind === 'hidden') ? null : (
+          <Button variant="secondary" isDisabled={!edit.ok} onPress={() => onEdit(listing.id)}>
+            {t('provider.myListings.action.edit')}
+          </Button>
+        )}
+      </View>
+
+      {locked === null ? null : (
         <Text className="text-sm text-muted">{t(`provider.myListings.locked.${locked}`)}</Text>
       )}
     </View>

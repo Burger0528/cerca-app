@@ -57,13 +57,80 @@
         "title": "You haven't published anything yet",
         "body": "Your listings will show up here once you create the first one."
       },
+      "create": "Publish a listing",
       "action": {
         "publish": "Publish",
-        "pause": "Pause"
+        "pause": "Pause",
+        "edit": "Edit"
       },
       "locked": {
         "under_review": "Under review. You can't change it while we look into it.",
         "removed": "Removed by moderation. It can't be published again."
+      }
+    },
+    "editListing": {
+      "title": "Edit listing",
+      "save": "Save changes",
+      "saving": "Saving…"
+    },
+    "newListing": {
+      "step": "Step {{current}} of {{total}}",
+      "next": "Continue",
+      "back": "Back",
+      "publish": "Publish",
+      "publishing": "Publishing…",
+      "category": {
+        "heading": "What do you offer?",
+        "label": "Pick a category"
+      },
+      "details": {
+        "heading": "Describe it",
+        "title": "Title",
+        "titlePlaceholder": "Guitar lessons for beginners",
+        "description": "Description",
+        "descriptionPlaceholder": "What you do, what's included, how you work."
+      },
+      "pricing": {
+        "heading": "How do you charge?",
+        "model": "Pricing model",
+        "models": {
+          "fixed": "Fixed price",
+          "hourly": "Per hour",
+          "quote": "On request"
+        },
+        "currency": "Currency",
+        "amount": "Amount",
+        "minimumHours": "Minimum hours",
+        "quoteHint": "You'll agree the price with each customer, so there's nothing to set here."
+      },
+      "location": {
+        "heading": "Where do you work?",
+        "label": "Your listing will show up around",
+        "device": "Your current location",
+        "missing": "No location yet",
+        "hint": "Customers nearby will find it first."
+      }
+    }
+  },
+  "moderation": {
+    "tabTitle": "Reports",
+    "reports": {
+      "title": "Reported listings",
+      "empty": {
+        "title": "Nothing to review",
+        "body": "Reports from the community will land here."
+      },
+      "status": {
+        "open": "Waiting for a decision",
+        "resolved": "Listing removed",
+        "dismissed": "Left as it was"
+      },
+      "action": {
+        "remove": "Remove listing",
+        "dismiss": "Dismiss"
+      },
+      "a11y": {
+        "row": "Report: {{reason}}. {{status}}."
       }
     }
   },
@@ -144,7 +211,9 @@
     "server": "Something broke on our side. Try again in a moment.",
     "contract": "We got a response we don't understand. We're on it.",
     "unknown": "Something went wrong.",
-    "locationRequired": "We need a location to search from. Allow location or pick a city."
+    "locationRequired": "We need a location to search from. Allow location or pick a city.",
+    "notOwner": "This listing isn't yours, so you can't change it.",
+    "validation": "Check the fields: something isn't right."
   },
   "validation": {
     "email": {
@@ -158,6 +227,23 @@
     "displayName": {
       "required": "Enter your name.",
       "tooLong": "That name is too long."
+    },
+    "category": {
+      "required": "Pick a category."
+    },
+    "title": {
+      "tooShort": "At least 3 characters.",
+      "tooLong": "That title is too long."
+    },
+    "description": {
+      "required": "Describe what you offer.",
+      "tooLong": "That description is too long."
+    },
+    "amount": {
+      "invalid": "Enter an amount, like 450."
+    },
+    "minimumHours": {
+      "invalid": "Between 1 and 12 hours."
     },
     "currency": {
       "invalid": "Unsupported currency."
