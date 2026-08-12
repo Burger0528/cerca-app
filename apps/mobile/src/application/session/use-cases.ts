@@ -27,10 +27,18 @@ export async function restoreSession(deps: SessionDependencies): Promise<Session
 
   // Token caducado no es lo mismo que sesión muerta: primero se intenta renovar.
   if (isExpired(stored.tokens, deps.now())) {
-    const renewed = await deps.sessionManager.refresh();
-    if (renewed === null) {
-      await deps.sessionManager.clear();
-      return SIGNED_OUT;
+    try {
+      const renewed = await deps.sessionManager.refresh();
+      if (renewed === null) {
+        await deps.sessionManager.clear();
+        return SIGNED_OUT;
+      }
+    } catch {
+      // Sin red, o con el servidor caído, no se puede afirmar que la sesión esté muerta.
+      // Se entra con el actor del llavero y el cliente HTTP renovará en el primer 401,
+      // cuando vuelva la cobertura. Solo un `null` —el servidor RECHAZANDO el refresh
+      // token— echa al usuario.
+      return signedIn(stored.actor);
     }
   }
 
