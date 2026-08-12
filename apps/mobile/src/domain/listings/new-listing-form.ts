@@ -67,7 +67,7 @@ export const EMPTY_NEW_LISTING_FORM: NewListingForm = {
   title: '',
   description: '',
   model: 'fixed',
-  currency: 'MXN',
+  currency: 'COP',
   amount: '',
   minimumHours: '2',
 };

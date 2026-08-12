@@ -40,7 +40,10 @@ describe('newListingFormSchema', () => {
 
 describe('toCreateListingRequest', () => {
   it('turns what the provider typed into minor units', () => {
-    const request = toCreateListingRequest({ ...FILLED, amount: '1299,90' }, LOCATION);
+    const request = toCreateListingRequest(
+      { ...FILLED, currency: 'MXN', amount: '1299,90' },
+      LOCATION,
+    );
 
     expect(request?.pricing).toEqual({
       model: 'fixed',
@@ -48,9 +51,21 @@ describe('toCreateListingRequest', () => {
     });
   });
 
+  it('does not multiply a currency that has no decimals', () => {
+    const request = toCreateListingRequest(
+      { ...FILLED, currency: 'COP', amount: '45000' },
+      LOCATION,
+    );
+
+    expect(request?.pricing).toEqual({
+      model: 'fixed',
+      price: { amountMinor: 45000, currency: 'COP' },
+    });
+  });
+
   it('keeps the minimum hours as a number on an hourly price', () => {
     const request = toCreateListingRequest(
-      { ...FILLED, model: 'hourly', amount: '450', minimumHours: '2' },
+      { ...FILLED, model: 'hourly', currency: 'MXN', amount: '450', minimumHours: '2' },
       LOCATION,
     );
 
