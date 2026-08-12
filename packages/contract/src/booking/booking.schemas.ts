@@ -8,6 +8,8 @@ export const bookingStatusSchema = z.enum([
   'cancelled',
 ]);
 
+export const declineReasonSchema = z.enum(['unavailable', 'not_a_fit', 'other']);
+
 export const createBookingSchema = z
   .object({
     listingId: z.uuid(),
@@ -29,3 +31,19 @@ export const bookingResponseSchema = z.object({
 });
 
 export type BookingResponse = z.infer<typeof bookingResponseSchema>;
+
+export const bookingRoleQuerySchema = z
+  .object({
+    role: z.enum(['customer', 'provider']),
+    cursor: z.string().optional(),
+    limit: z.coerce.number().int().min(1).max(50).default(20),
+  })
+  .strict();
+
+export type BookingRoleQuery = z.infer<typeof bookingRoleQuerySchema>;
+
+export const acceptBookingSchema = z.object({ scheduledFor: z.iso.datetime() }).strict();
+export type AcceptBookingInput = z.infer<typeof acceptBookingSchema>;
+
+export const declineBookingSchema = z.object({ reason: declineReasonSchema }).strict();
+export type DeclineBookingInput = z.infer<typeof declineBookingSchema>;

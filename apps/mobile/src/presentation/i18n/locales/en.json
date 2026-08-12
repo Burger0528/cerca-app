@@ -188,7 +188,6 @@
       "bookOwnListing": "You can't book your own listing",
       "bookSuccess": "Request sent. We'll let you know when the provider responds."
     },
-
     "rating": {
       "reviews_one": "{{count}} review",
       "reviews_other": "{{count}} reviews",
@@ -203,6 +202,46 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. {{distance}} away."
+    }
+  },
+  "bookings": {
+    "title": "My bookings",
+    "role": {
+      "customer": "As customer",
+      "provider": "As provider"
+    },
+    "status": {
+      "requested": "Requested",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "row": {
+      "asCustomer": "Booking sent",
+      "asProvider": "Booking received"
+    },
+    "empty": {
+      "title": "No bookings yet",
+      "body": "When you book or receive a request, it'll show up here."
+    },
+    "actions": {
+      "accept": "Accept",
+      "complete": "Mark as completed",
+      "cancel": "Cancel booking",
+      "declineHeading": "Reason for declining"
+    },
+    "declineReason": {
+      "unavailable": "I'm not available",
+      "not_a_fit": "Not a fit for what I offer",
+      "other": "Other reason"
+    },
+    "explain": {
+      "requested": "Waiting for the provider's response.",
+      "accepted": "Confirmed. See you soon.",
+      "declined": "The provider couldn't accept this booking.",
+      "completed": "Booking completed.",
+      "cancelled": "This booking was cancelled."
     }
   },
   "location": {

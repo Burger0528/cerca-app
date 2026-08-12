@@ -204,6 +204,46 @@
       "card": "{{title}}. {{price}}. {{rating}}. A {{distance}}."
     }
   },
+  "bookings": {
+    "title": "Mis reservas",
+    "role": {
+      "customer": "Como cliente",
+      "provider": "Como proveedor"
+    },
+    "status": {
+      "requested": "Solicitada",
+      "accepted": "Aceptada",
+      "declined": "Rechazada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    },
+    "row": {
+      "asCustomer": "Reserva enviada",
+      "asProvider": "Reserva recibida"
+    },
+    "empty": {
+      "title": "Todavía no hay reservas",
+      "body": "Cuando reserves o recibas una solicitud, aparecerá aquí."
+    },
+    "actions": {
+      "accept": "Aceptar",
+      "complete": "Marcar como completada",
+      "cancel": "Cancelar reserva",
+      "declineHeading": "Motivo del rechazo"
+    },
+    "declineReason": {
+      "unavailable": "No tengo disponibilidad",
+      "not_a_fit": "No encaja con lo que ofrezco",
+      "other": "Otro motivo"
+    },
+    "explain": {
+      "requested": "Esperando respuesta del proveedor.",
+      "accepted": "Confirmada. Nos vemos pronto.",
+      "declined": "El proveedor no pudo aceptar esta reserva.",
+      "completed": "Reserva completada.",
+      "cancelled": "Esta reserva fue cancelada."
+    }
+  },
   "location": {
     "title": "¿Desde dónde buscamos?",
     "chooseCity": "Elegir ciudad",
