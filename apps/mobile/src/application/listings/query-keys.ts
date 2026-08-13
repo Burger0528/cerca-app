@@ -44,3 +44,8 @@ export const sessionKeys = {
   all: ['session'] as const,
   me: () => [...sessionKeys.all, 'me'] as const,
 } as const;
+
+export const reviewKeys = {
+  all: ['reviews'] as const,
+  forListing: (listingId: string) => [...reviewKeys.all, 'listing', listingId] as const,
+} as const;

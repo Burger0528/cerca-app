@@ -11,11 +11,17 @@
  * detalle, así que no hace falta pedirla de nuevo. Si el detalle se abre por deep link
  * (sin pasar por la lista), no hay distancia que enseñar y la línea se omite: el dato no
  * se inventa en el cliente.
+ *
+ * La lista de reseñas al final va virtualizada (`FlatList`), con `keyExtractor` estable y
+ * `renderItem`/`ReviewRow` memoizados -- una fila que no cambió no se vuelve a pintar
+ * cuando llega la siguiente página.
  */
 import { formatDistance } from '@cerca/contract';
+import type { ReviewResponse } from '@cerca/contract';
 import { useLocalSearchParams } from 'expo-router';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Share, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Share, Text, View } from 'react-native';
 
 import {
   ContractViolationError,
@@ -26,8 +32,10 @@ import {
 import { useActor } from '../auth/use-can';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
+import { ReviewRow } from '../components/review-row';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
+import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
 import { useRequestBooking } from '../hooks/use-request-booking';
 import type { FeedbackMessageKey } from '../i18n/message-keys';
@@ -42,6 +50,13 @@ export function ListingDetailScreen() {
   const detail = useListingDetail(id);
   const actor = useActor();
   const booking = useRequestBooking();
+  const reviews = useListingReviews(id);
+
+  const keyExtractor = useCallback((review: ReviewResponse) => review.id, []);
+  const renderReview = useCallback(
+    ({ item }: { item: ReviewResponse }) => <ReviewRow review={item} />,
+    [],
+  );
 
   if (detail.isPending) {
     return (
@@ -136,6 +151,20 @@ export function ListingDetailScreen() {
           {t(messageKeyFor(booking.error))}
         </Text>
       ) : null}
+
+      <FlatList
+        data={reviews.reviews}
+        keyExtractor={keyExtractor}
+        renderItem={renderReview}
+        removeClippedSubviews
+        onEndReachedThreshold={0.6}
+        onEndReached={() => {
+          if (reviews.hasNextPage && !reviews.isFetchingNextPage) void reviews.fetchNextPage();
+        }}
+        ListFooterComponent={
+          reviews.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : null
+        }
+      />
     </View>
   );
 }
