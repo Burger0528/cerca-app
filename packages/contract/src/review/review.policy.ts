@@ -1,4 +1,5 @@
 import type { Actor } from '../actor/actor.ts';
+import { can } from '../actor/permissions.ts';
 import type { Booking } from '../booking/booking.ts';
 
 export const REVIEW_BLOCKED_REASONS = [
@@ -63,4 +64,32 @@ export function isReviewBlockedReason(
   value: string | null | undefined,
 ): value is ReviewBlockedReason {
   return REVIEW_BLOCKED_REASONS.some((reason) => reason === value);
+}
+
+export type ModerateReviewBlock =
+  | { readonly kind: 'hidden'; readonly reason: 'no_permission' }
+  | { readonly kind: 'disabled'; readonly reason: 'is_author' };
+
+export type ModerateReviewEligibility =
+  { readonly ok: true } | ({ readonly ok: false } & ModerateReviewBlock);
+
+export const MODERATE_REVIEW_ACTIONS = ['remove', 'keep'] as const;
+
+export type ModerateReviewAction = (typeof MODERATE_REVIEW_ACTIONS)[number];
+
+/**
+ * Moderar una reseña pide el permiso de plataforma Y no ser quien la escribió.
+ *
+ * Sin permiso el control no existe; siendo el autor sí se pinta, deshabilitado, porque ahí
+ * hay una regla que merece leerse. El servidor rechaza el segundo caso con
+ * `CANNOT_MODERATE_OWN_REVIEW` y `reason: is_author`, la misma palabra que este bloqueo.
+ */
+export function canModerateReview(
+  actor: Actor,
+  review: { readonly authorId: string },
+): ModerateReviewEligibility {
+  if (!can(actor, 'review:moderate')) return { ok: false, kind: 'hidden', reason: 'no_permission' };
+  if (review.authorId === actor.id) return { ok: false, kind: 'disabled', reason: 'is_author' };
+
+  return { ok: true };
 }

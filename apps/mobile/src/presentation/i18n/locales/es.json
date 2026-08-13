@@ -193,6 +193,15 @@
       "a11y": {
         "row": "Denuncia: {{reason}}. {{status}}."
       }
+    },
+    "reviews": {
+      "action": {
+        "remove": "Retirar reseña",
+        "keep": "Dejarla"
+      },
+      "blocked": {
+        "is_author": "Es tu propia reseña, así que no puedes moderarla."
+      }
     }
   },
   "search": {

@@ -40,3 +40,12 @@ export const moderateListingSchema = z
   .strict();
 
 export type ModerateListingRequest = z.infer<typeof moderateListingSchema>;
+
+export const moderateReviewSchema = z
+  .object({
+    action: z.enum(['remove', 'keep']),
+    reason: z.string().max(500).optional(),
+  })
+  .strict();
+
+export type ModerateReviewRequest = z.infer<typeof moderateReviewSchema>;

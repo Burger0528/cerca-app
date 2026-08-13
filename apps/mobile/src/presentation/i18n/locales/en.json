@@ -193,6 +193,15 @@
       "a11y": {
         "row": "Report: {{reason}}. {{status}}."
       }
+    },
+    "reviews": {
+      "action": {
+        "remove": "Remove review",
+        "keep": "Keep it"
+      },
+      "blocked": {
+        "is_author": "It's your own review, so you can't moderate it."
+      }
     }
   },
   "search": {

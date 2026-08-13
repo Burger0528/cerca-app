@@ -12,7 +12,7 @@
  * (sin pasar por la lista), no hay distancia que enseñar y la línea se omite: el dato no
  * se inventa en el cliente.
  */
-import type { Review } from '@cerca/contract';
+import type { ModerateReviewAction, Review } from '@cerca/contract';
 import { formatDistance } from '@cerca/contract';
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams } from 'expo-router';
@@ -31,6 +31,7 @@ import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
+import { useModerateReview } from '../hooks/use-moderate-review';
 import { messageKeyForError } from '../i18n/error-message-key';
 
 export function ListingDetailScreen() {
@@ -44,11 +45,28 @@ export function ListingDetailScreen() {
   const detail = useListingDetail(id);
   const reviews = useListingReviews(id);
 
+  const moderation = useModerateReview(id);
+  const { mutate: moderateReview } = moderation;
+  const moderatingId = moderation.isPending ? moderation.variables.reviewId : null;
+
+  const onModerate = useCallback(
+    (reviewId: string, action: ModerateReviewAction) => moderateReview({ reviewId, action }),
+    [moderateReview],
+  );
+
   const keyExtractor = useCallback((review: Review) => review.id, []);
 
   const renderReview = useCallback(
-    ({ item }: { item: Review }) => <ReviewRow review={item} locale={locale} />,
-    [locale],
+    ({ item }: { item: Review }) => (
+      <ReviewRow
+        review={item}
+        actor={actor}
+        locale={locale}
+        isBusy={item.id === moderatingId}
+        onModerate={onModerate}
+      />
+    ),
+    [actor, locale, moderatingId, onModerate],
   );
 
   if (detail.isPending) {

@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 import type { Actor } from '../actor/actor.ts';
 import type { Booking } from '../booking/booking.ts';
 
-import { REVIEW_WINDOW_DAYS, canReviewBooking, isReviewBlockedReason } from './review.policy.ts';
+import {
+  REVIEW_WINDOW_DAYS,
+  canModerateReview,
+  canReviewBooking,
+  isReviewBlockedReason,
+} from './review.policy.ts';
 
 const CUSTOMER = '11111111-1111-4111-8111-111111111111';
 const SOMEONE_ELSE = '22222222-2222-4222-8222-222222222222';
@@ -82,6 +87,35 @@ describe('canReviewBooking', () => {
         daysAfterCompletion(90),
       ),
     ).toEqual({ ok: false, reason: 'not_your_booking' });
+  });
+});
+
+describe('canModerateReview', () => {
+  const moderator: Actor = {
+    id: SOMEONE_ELSE,
+    capacities: ['customer'],
+    platformRole: 'moderator',
+  };
+
+  it('hides the control from an account without the platform role', () => {
+    expect(canModerateReview(actor, { authorId: SOMEONE_ELSE })).toEqual({
+      ok: false,
+      kind: 'hidden',
+      reason: 'no_permission',
+    });
+  });
+
+  it('lets a moderator act on someone else’s review', () => {
+    expect(canModerateReview(moderator, { authorId: CUSTOMER })).toEqual({ ok: true });
+  });
+
+  /** Un moderador también escribe reseñas, y no puede moderar la suya. */
+  it('disables it, with a reason, on the moderator’s own review', () => {
+    expect(canModerateReview(moderator, { authorId: SOMEONE_ELSE })).toEqual({
+      ok: false,
+      kind: 'disabled',
+      reason: 'is_author',
+    });
   });
 });
 
