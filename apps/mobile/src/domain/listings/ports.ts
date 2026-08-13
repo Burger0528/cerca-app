@@ -7,6 +7,7 @@ import type {
   ListingSearchFilters,
   ListingStatusAction,
   MyListing,
+  Review,
   UpdateListingRequest,
 } from '@cerca/contract';
 
@@ -28,6 +29,11 @@ export interface ListingGatewayPort {
   listMine(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<MyListing>>;
   create(request: CreateListingRequest): Promise<ListingDetail>;
   detail(listingId: string, signal?: AbortSignal): Promise<ListingDetail>;
+  listReviews(
+    listingId: string,
+    cursor: string | null,
+    signal?: AbortSignal,
+  ): Promise<CursorPage<Review>>;
   update(listingId: string, request: UpdateListingRequest): Promise<ListingDetail>;
   setStatus(listingId: string, action: ListingStatusAction): Promise<void>;
 }

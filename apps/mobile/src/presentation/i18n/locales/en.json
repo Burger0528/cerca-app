@@ -259,6 +259,12 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. {{distance}} away."
+    },
+    "reviews": {
+      "title_zero": "No reviews yet",
+      "title_one": "{{count}} review",
+      "title_other": "{{count}} reviews",
+      "rating": "{{rating}} out of 5"
     }
   },
   "location": {

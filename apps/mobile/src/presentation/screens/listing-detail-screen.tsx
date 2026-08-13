@@ -12,11 +12,13 @@
  * (sin pasar por la lista), no hay distancia que enseñar y la línea se omite: el dato no
  * se inventa en el cliente.
  */
+import type { Review } from '@cerca/contract';
 import { formatDistance } from '@cerca/contract';
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams } from 'expo-router';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Share, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Share, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HttpError } from '../../domain/errors/app-error';
@@ -24,8 +26,10 @@ import { useActor } from '../auth/use-can';
 import { BookListingButton } from '../components/book-listing-button';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
+import { ReviewRow } from '../components/review-row';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
+import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
 import { messageKeyForError } from '../i18n/error-message-key';
 
@@ -38,6 +42,14 @@ export function ListingDetailScreen() {
   const locale = useLocale();
   const actor = useActor();
   const detail = useListingDetail(id);
+  const reviews = useListingReviews(id);
+
+  const keyExtractor = useCallback((review: Review) => review.id, []);
+
+  const renderReview = useCallback(
+    ({ item }: { item: Review }) => <ReviewRow review={item} locale={locale} />,
+    [locale],
+  );
 
   if (detail.isPending) {
     return (
@@ -81,8 +93,10 @@ export function ListingDetailScreen() {
       ? null
       : formatDistance({ meters: Number(distanceMeters) }, locale);
 
-  return (
-    <SafeAreaView className="flex-1 gap-3 bg-surface px-4 py-4" edges={['top']}>
+  // El detalle ES la lista de reseñas, con el anuncio de cabecera. Así las reseñas se
+  // virtualizan sin anidar una lista dentro de un scroll, que es lo que rompe el reciclado.
+  const header = (
+    <View className="gap-3 px-4 py-4">
       <View className="flex-row items-center gap-2">
         <Text className="flex-1 text-xl font-semibold text-foreground">{listing.title}</Text>
         {listing.status === 'published' ? null : <StatusBadge status={listing.status} />}
@@ -114,6 +128,29 @@ export function ListingDetailScreen() {
       >
         {t('listing.detail.share')}
       </Button>
+
+      <Text className="pt-2 text-lg font-semibold text-foreground">
+        {t('listing.reviews.title', { count: listing.ratingCount })}
+      </Text>
+    </View>
+  );
+
+  return (
+    <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
+      <FlatList
+        data={reviews.reviews}
+        keyExtractor={keyExtractor}
+        renderItem={renderReview}
+        ListHeaderComponent={header}
+        removeClippedSubviews
+        onEndReachedThreshold={0.6}
+        onEndReached={() => {
+          if (reviews.hasNextPage && !reviews.isFetchingNextPage) void reviews.fetchNextPage();
+        }}
+        ListFooterComponent={
+          reviews.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : null
+        }
+      />
     </SafeAreaView>
   );
 }
