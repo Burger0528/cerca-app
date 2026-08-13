@@ -8,11 +8,6 @@
     "scheme": "cerca",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "bundleIdentifier": "com.andreshurtado.cerca",
-      "supportsTablet": false,
-      "icon": "./assets/expo.icon"
-    },
     "android": {
       "package": "com.cerca.app",
       "adaptiveIcon": {

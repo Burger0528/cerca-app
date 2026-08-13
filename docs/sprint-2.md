@@ -1,8 +1,12 @@
 # Cerca · App móvil · Sprint 2 · Publicar, reservar, reseñar y entregar
 
 > Sprint final. Jorge y Salvador. Dos semanas.
-> Al cerrar, la app se instala desde un enlace en un Android y en un iPhone que no son
-> nuestros, y quien la abre busca, publica, reserva y reseña sin que se rompa.
+> Al cerrar, la app se instala desde un enlace en un Android que no es nuestro, y quien la
+> abre busca, publica, reserva y reseña sin que se rompa.
+>
+> **Solo Android.** Decisión de producto tomada durante el sprint: iOS exige cuenta de Apple
+> Developer de pago y los UDID de cada iPhone, y no estaba disponible. Volver es añadir el
+> bloque `ios` a `app.json`; el código de la app no cambia.
 
 ## De dónde partimos
 
@@ -37,7 +41,7 @@ El guion de la demo, con un teléfono que no es nuestro y sin tocar el portátil
    ese anuncio.
 3. Me hago proveedor desde la app. Aparece "Mis anuncios" sin reiniciar nada.
 4. Publico un anuncio en cuatro pasos: "por hora" me pide horas mínimas, "presupuesto" no
-   me pide precio, subo dos fotos, publico.
+   me pide precio, publico. **Sin fotos**: el endpoint no existe en la API.
 5. Con otra cuenta reservo ese servicio. Pulso dos veces y solo hay una reserva. Vuelvo
    atrás y el estado ya es el nuevo.
 6. El proveedor acepta y completa. El cliente reseña. Intento reseñar otra vez y el botón
@@ -70,12 +74,12 @@ que coincidir **letra por letra** con los del servidor, porque son la misma clav
 en los dos lados. Si no coinciden, el usuario ve "Algo ha salido mal" donde debería leer la
 regla.
 
-**3 · El entorno de Android y las credenciales de tienda.** Android Studio, el SDK, el JDK
-y un teléfono de gama media instalados y funcionando el día cero, no el día que toque
-medir. Android necesita además un keystore, y lo genera EAS. iOS necesita
-una cuenta de Apple Developer de pago y, o bien los UDID de los iPhone donde se va a
-instalar (ad-hoc), o bien TestFlight. Sin resolverlo el día cero, **US-10 no cierra en iOS**
-y no hay forma de arreglarlo en la última tarde.
+**3 · El entorno de Android.** Android Studio, el SDK, el JDK y un teléfono de gama media
+instalados y funcionando el día cero, no el día que toque medir. El keystore lo genera EAS.
+
+Ojo con el JDK: el que trae Android Studio es un 25, y sus restricciones de acceso nativo
+tumban las tareas de CMake de `react-native-screens` y `react-native-worklets`. Hace falta
+un **JDK 17** aparte y `JAVA_HOME` apuntando a él.
 
 Lo que **no** entra, aunque esté en el delta: generar los tipos de la app desde el OpenAPI
 del backend. Es buena idea y son dos días en un sprint que ya está lleno. Se mantiene el
@@ -125,8 +129,8 @@ nativo que Metro no enseña, el **Profiler** de memoria y CPU para el scroll lar
 **Layout Inspector** para la jerarquía de la tarjeta. El día a día sigue siendo VS Code y
 Metro; Android Studio no sustituye el ciclo de Expo.
 
-iOS no se abandona: la app se entrega en las dos plataformas (US-10) y se sigue probando en
-el iPhone antes de cada PR. Solo cambia dónde se mide y dónde se depura.
+No hay iOS que mantener: `app.json` ya no lleva bloque `ios` y `eas.json` solo tiene
+perfiles de Android.
 
 ## Reparto
 
@@ -138,7 +142,7 @@ de arriba abajo con sus schemas, sus hooks y sus textos, y no se pisan archivos.
 | Escritura | Publicar, editar, mis anuncios                    | Reservar, gestionar reservas, reseñar         |
 | Autoridad | Kit de autorización de UI, capacidad de proveedor | La política de reseña y sus motivos           |
 | Producto  | Moderación                                        | Detalle de anuncio, favorito, compartir       |
-| Cierre    | EAS: Android e iOS instalables                    | i18n, accesibilidad y rendimiento de lo nuevo |
+| Cierre    | EAS: APK de Android instalable                    | i18n, accesibilidad y rendimiento de lo nuevo |
 
 ### Reglas del reparto
 
@@ -189,12 +193,11 @@ Lo que las dos columnas necesitan, en un solo sitio y antes que nada.
 - La unión `Pricing` dirige el paso 2: `hourly` pide `minimumHours`, `quote` **no pide
   precio ni lo tiene en el tipo**, `fixed` pide un importe. Un `switch` con
   `assertNever` sobre `model`.
-- El anuncio se crea como `draft` al terminar el paso 3, y las fotos se suben al paso 4
-  contra `POST /listings/:id/photos:presign` + `PUT` a `uploadUrl`. No es un capricho: el
-  presign necesita un `id`. Efecto de lado bueno: **el borrador retomable es el `draft` del
-  servidor**, no un JSON en el teléfono.
-- Las fotos se reducen con `expo-image-manipulator` **antes** de subir. Una foto de
-  4000×3000 son ~48 MB descomprimidos y el móvil de gama media se cae.
+- El anuncio se crea como `draft` y se publica a continuación. Efecto de lado bueno: **el
+  borrador retomable es el `draft` del servidor**, no un JSON en el teléfono.
+- **Sin paso de fotos.** `POST /listings/:id/photos:presign` responde 404 y no aparece entre
+  las 29 rutas que publica el backend. Es una dependencia del backend, no trabajo de front:
+  el criterio "las fotos suben" queda **fuera de alcance** hasta que exista el endpoint.
 - `POST /listings/:id/publish` cierra el flujo.
 
 ### J4 · Editar solo lo mío · US-04
@@ -221,12 +224,11 @@ Lo que las dos columnas necesitan, en un solo sitio y antes que nada.
 - **Android**: perfil `preview` con `buildType: apk` y distribución interna. Enlace y QR.
 - `expo-build-properties` para el HTTP en claro del perfil de preview, o backend en HTTPS.
   Sin esto el APK instala, abre y **no carga nada**, sin error visible.
-- **iOS**: distribución interna ad-hoc con los UDID registrados, o TestFlight. Lo que se
-  decidiera el día cero.
+- **Sin iOS.** No se mantiene proyecto de Xcode ni perfiles de Apple.
 - `expo-updates` con canal `preview` para mandar JS, estilos y traducciones sin rebuild.
 - `app.json` al día: `version`, `runtimeVersion`, iconos, splash, y los textos de permiso
   de **ubicación y fotos**, en los dos idiomas.
-- Alguien que no escribió la app la instala en un Android y en un iPhone **físicos** y la
+- Alguien que no escribió la app la instala en un **Android físico** y la
   abre. Dos líneas en el README con los pasos.
 
 ## Salvador
@@ -368,8 +370,6 @@ en la mano. Si no puede reproducir un punto, se devuelve.
       "presupuesto" y no me pide precio en ninguna parte.
 - [ ] Salgo de la app a mitad de la publicación, vuelvo, y el borrador está en "Mis
       anuncios" para retomarlo.
-- [ ] Subo dos fotos desde la galería y aparecen en el anuncio publicado. Una foto de 12 MP
-      no tumba la app.
 - [ ] Abro el anuncio de otra cuenta y **no hay** botón de editar. Fuerzo el `PATCH` con la
       app y el servidor lo rechaza con `not_owner`, y la app lo enseña traducido.
 - [ ] Pauso un anuncio y el cambio se ve en "Mis anuncios" **y** en la búsqueda, sin tirar
@@ -383,7 +383,6 @@ en la mano. Si no puede reproducir un punto, se devuelve.
       se pierde, es que estaba editado a mano donde no tocaba.
 - [ ] Un compañero instala la app desde el enlace en un **Android físico** y la abre, y la
       app **carga datos**: el HTTP en claro del perfil de preview está resuelto.
-- [ ] Un compañero instala la app desde el enlace en un **iPhone físico** y la abre.
 - [ ] Publico un cambio de traducción por OTA y llega sin rebuild.
 - [ ] `./scripts/verify.sh` en verde, y en CI también.
 
@@ -442,23 +441,23 @@ en la mano. Si no puede reproducir un punto, se devuelve.
 | Rendimiento   | 55 FPS con 5.000 tarjetas                                | cerrado en sprint 1 |
 | Rendimiento   | Memoria estable en scroll largo                          | Salvador            |
 | Rendimiento   | Modo avión a mitad de una reserva                        | Salvador            |
-| Entrega       | Probado en dispositivo físico                            | los dos             |
+| Entrega       | Probado en un Android físico                             | los dos             |
 | Entrega       | Instalado desde preview por alguien que no lo escribió   | Jorge               |
 | Entrega       | `verify.sh` en verde y `main` protegida                  | Jorge               |
 
 ## Calendario
 
-| Día | Jorge                                                                         | Salvador                                        |
-| --- | ----------------------------------------------------------------------------- | ----------------------------------------------- |
-| 0   | Postman, Android Studio y SDK, credenciales de tienda                         | Postman, Android Studio y SDK, motivos de error |
-| 1–2 | **J0 · kit compartido a `main`**                                              | S1 · detalle, favorito, compartir               |
-| 3   | J6 · **primera build de preview instalable**                                  | S1 · cierre                                     |
-| 4–5 | J1 y J2 · proveedor y mis anuncios                                            | S2 · reservar                                   |
-| 5   | Demo cruzada interna. Se revisa el delta del backend                          | Demo cruzada interna                            |
-| 6–8 | J3 · publicar en 4 pasos                                                      | S3 y S4 · reservas y la política de reseña      |
-| 9   | J4 y J5 · editar y moderación                                                 | S5 · i18n y accesibilidad                       |
-| 10  | J6 · build final, OTA, README                                                 | S6 · rendimiento                                |
-| 10  | **Congelación**: solo QA del DoD en dispositivo físico. Ni una función nueva. | Igual                                           |
+| Día | Jorge                                                                        | Salvador                                        |
+| --- | ---------------------------------------------------------------------------- | ----------------------------------------------- |
+| 0   | Postman, Android Studio y SDK, credenciales de tienda                        | Postman, Android Studio y SDK, motivos de error |
+| 1–2 | **J0 · kit compartido a `main`**                                             | S1 · detalle, favorito, compartir               |
+| 3   | J6 · **primera build de preview instalable**                                 | S1 · cierre                                     |
+| 4–5 | J1 y J2 · proveedor y mis anuncios                                           | S2 · reservar                                   |
+| 5   | Demo cruzada interna. Se revisa el delta del backend                         | Demo cruzada interna                            |
+| 6–8 | J3 · publicar en 4 pasos                                                     | S3 y S4 · reservas y la política de reseña      |
+| 9   | J4 y J5 · editar y moderación                                                | S5 · i18n y accesibilidad                       |
+| 10  | J6 · build final, OTA, README                                                | S6 · rendimiento                                |
+| 10  | **Congelación**: solo QA del DoD en un Android físico. Ni una función nueva. | Igual                                           |
 
 El día 3 hay build instalable aunque la app haga poco. Es lo que evita descubrir el
 problema de firma de iOS el último día.
@@ -468,6 +467,10 @@ problema de firma de iOS el último día.
 No se trabaja en esto aunque sobre tiempo:
 
 - Chat en tiempo real (US-11) y pagos (US-12). Están fuera por el enunciado.
+- **iOS.** Decisión de producto: no hay cuenta de Apple Developer y no se mantiene el
+  proyecto de Xcode.
+- **Las fotos de un anuncio.** El endpoint de subida no existe en la API. Es una dependencia
+  del backend: mientras no aparezca, no hay nada que el front pueda entregar ahí.
 - Generar tipos desde el OpenAPI del backend. Decidido el día cero, anotado en el delta.
 - Pantalla de perfil, ajustes, onboarding, notificaciones push, modo oscuro manual,
   búsqueda por mapa, historial de búsquedas. Ninguna aparece en una historia.

@@ -1,22 +1,20 @@
 {
   "cli": {
     "version": ">= 21.0.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "remote",
+    "appPlatform": "android"
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "ios": { "simulator": true }
+      "android": { "buildType": "apk" }
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "ios": { "simulator": false }
+      "android": { "buildType": "apk" }
     },
     "production": {
-      "distribution": "store",
       "android": { "buildType": "app-bundle" },
       "autoIncrement": true
     }

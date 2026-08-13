@@ -65,9 +65,13 @@ no está ninguna de estas dos.
 | `POST` y `DELETE /listings/{id}/favorite` | no está  | El favorito optimista de S1, de Salvador |
 
 **Consecuencia para US-03:** el asistente de publicación tiene sus cuatro pasos —categoría,
-detalles, precio y zona— pero **no hay paso de fotos**, porque no hay dónde subirlas. El
-criterio "las fotos suben" no se puede cumplir sin trabajo del backend. Tampoco sirve de nada
-reducir la imagen con `expo-image-manipulator`, así que esa dependencia no se ha añadido.
+detalles, precio y zona— pero **no hay paso de fotos**, porque no hay dónde subirlas. Tampoco
+sirve de nada reducir la imagen con `expo-image-manipulator`, así que esa dependencia no se ha
+añadido.
+
+**Decisión tomada:** las fotos quedan **fuera de alcance del front**. Es una dependencia del
+backend, no trabajo pendiente nuestro; el día que exista el endpoint, el paso se añade al
+asistente y se cierra el criterio. Mientras tanto no se simula ni se deja a medias.
 
 **Consecuencia para Salvador:** su pieza de mutación optimista con rollback se queda sin el
 caso que la iba a demostrar. Hay otro camino: publicar/pausar en "Mis anuncios" ya la usa, y
