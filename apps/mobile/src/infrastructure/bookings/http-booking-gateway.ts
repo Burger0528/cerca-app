@@ -1,4 +1,4 @@
-import { bookingSchema, cursorPageSchema } from '@cerca/contract';
+import { bookingSchema, cursorPageSchema, reviewSchema } from '@cerca/contract';
 import type {
   AcceptBookingRequest,
   Booking,
@@ -6,6 +6,8 @@ import type {
   CreateBookingRequest,
   CursorPage,
   DeclineBookingRequest,
+  Review,
+  WriteReviewRequest,
 } from '@cerca/contract';
 
 import type { BookingGatewayPort } from '../../domain/bookings/ports';
@@ -55,6 +57,21 @@ export function createHttpBookingGateway(http: HttpClient): BookingGatewayPort {
 
     cancel(bookingId: string): Promise<void> {
       return http.requestVoid({ path: `/bookings/${bookingId}/cancel`, method: 'POST' });
+    },
+
+    detail(bookingId: string, signal?: AbortSignal): Promise<Booking> {
+      return http.request({ path: `/bookings/${bookingId}`, signal }, bookingSchema);
+    },
+
+    review(
+      bookingId: string,
+      request: WriteReviewRequest,
+      idempotencyKey: string,
+    ): Promise<Review> {
+      return http.request(
+        { path: `/bookings/${bookingId}/review`, method: 'POST', body: request, idempotencyKey },
+        reviewSchema,
+      );
     },
   };
 }

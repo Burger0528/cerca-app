@@ -1,4 +1,5 @@
 import type { Booking, BookingRole } from '@cerca/contract';
+import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
@@ -15,6 +16,7 @@ import { messageKeyForError } from '../i18n/error-message-key';
 
 export function BookingsScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const locale = useLocale();
   const isProvider = useHasCapacity('provider');
   const [role, setRole] = useState<BookingRole>('customer');
@@ -31,6 +33,12 @@ export function BookingsScreen() {
     [mutate],
   );
 
+  const openReview = useCallback(
+    (bookingId: string) =>
+      router.push({ pathname: '/bookings/[id]/review', params: { id: bookingId } }),
+    [router],
+  );
+
   const keyExtractor = useCallback((booking: Booking) => booking.id, []);
 
   const renderItem = useCallback(
@@ -41,9 +49,10 @@ export function BookingsScreen() {
         locale={locale}
         isBusy={item.id === decidingId}
         onDecide={decide}
+        onReview={openReview}
       />
     ),
-    [role, locale, decidingId, decide],
+    [role, locale, decidingId, decide, openReview],
   );
 
   return (

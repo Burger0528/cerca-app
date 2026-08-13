@@ -133,7 +133,8 @@
       "accept": "Aceptar",
       "decline": "Rechazar",
       "complete": "Marcar como hecha",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "review": "Escribir una reseña"
     },
     "empty": {
       "customer": {
@@ -147,6 +148,20 @@
     },
     "a11y": {
       "row": "Reserva. {{status}}. {{date}}."
+    }
+  },
+  "review": {
+    "title": "¿Qué tal fue?",
+    "rating": "Tu valoración, sobre 5",
+    "body": "Tu reseña",
+    "bodyPlaceholder": "Qué salió bien y qué se podría mejorar.",
+    "submit": "Publicar reseña",
+    "sending": "Publicando…",
+    "blocked": {
+      "not_your_booking": "Esta reserva no es tuya, así que no puedes reseñarla.",
+      "not_completed": "Podrás reseñarla cuando el servicio esté hecho.",
+      "already_reviewed": "Ya reseñaste esta reserva.",
+      "window_closed": "El plazo de 30 días para reseñar esta reserva ya terminó."
     }
   },
   "booking": {
@@ -301,6 +316,13 @@
     },
     "currency": {
       "invalid": "Divisa no soportada."
+    },
+    "rating": {
+      "required": "Elige una valoración del 1 al 5."
+    },
+    "reviewBody": {
+      "required": "Escribe unas palabras.",
+      "tooLong": "Esa reseña es demasiado larga."
     }
   }
 }

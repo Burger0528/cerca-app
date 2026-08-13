@@ -45,13 +45,26 @@ export interface BookingRowProps {
   readonly locale: string;
   readonly isBusy: boolean;
   readonly onDecide: (bookingId: string, action: BookingAction, scheduledFor?: string) => void;
+  readonly onReview: (bookingId: string) => void;
 }
 
-function BookingRowComponent({ booking, role, locale, isBusy, onDecide }: BookingRowProps) {
+function BookingRowComponent({
+  booking,
+  role,
+  locale,
+  isBusy,
+  onDecide,
+  onReview,
+}: BookingRowProps) {
   const { t } = useTranslation();
   const [isPickingDate, setPickingDate] = useState(false);
 
   const actions = actionsFor(booking.status, role);
+
+  // La reseña se ofrece a quien contrató, sobre una reserva completada. Si además se puede
+  // o no lo decide `canReviewBooking` dentro de la pantalla, que es donde hay motivo que
+  // enseñar.
+  const canOpenReview = role === 'customer' && booking.status.kind === 'completed';
 
   return (
     <View
@@ -102,6 +115,12 @@ function BookingRowComponent({ booking, role, locale, isBusy, onDecide }: Bookin
               {t(`bookings.action.${action}`)}
             </Button>
           ))}
+
+          {canOpenReview ? (
+            <Button variant="secondary" onPress={() => onReview(booking.id)}>
+              {t('bookings.action.review')}
+            </Button>
+          ) : null}
         </View>
       )}
     </View>

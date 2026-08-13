@@ -133,7 +133,8 @@
       "accept": "Accept",
       "decline": "Decline",
       "complete": "Mark as done",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "review": "Write a review"
     },
     "empty": {
       "customer": {
@@ -147,6 +148,20 @@
     },
     "a11y": {
       "row": "Booking. {{status}}. {{date}}."
+    }
+  },
+  "review": {
+    "title": "How did it go?",
+    "rating": "Your rating, out of 5",
+    "body": "Your review",
+    "bodyPlaceholder": "What went well, what could be better.",
+    "submit": "Post review",
+    "sending": "Posting…",
+    "blocked": {
+      "not_your_booking": "This booking isn't yours, so you can't review it.",
+      "not_completed": "You can review it once the service is done.",
+      "already_reviewed": "You already reviewed this booking.",
+      "window_closed": "The 30-day window to review this booking has closed."
     }
   },
   "booking": {
@@ -230,7 +245,6 @@
       "share": "Share",
       "shareMessage": "{{title}} on Cerca: {{url}}"
     },
-
     "rating": {
       "reviews_one": "{{count}} review",
       "reviews_other": "{{count}} reviews",
@@ -302,6 +316,13 @@
     },
     "currency": {
       "invalid": "Unsupported currency."
+    },
+    "rating": {
+      "required": "Pick a rating from 1 to 5."
+    },
+    "reviewBody": {
+      "required": "Write a few words.",
+      "tooLong": "That review is too long."
     }
   }
 }
