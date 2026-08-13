@@ -49,3 +49,4 @@ export const moderateReviewSchema = z
   .strict();
 
 export type ModerateReviewRequest = z.infer<typeof moderateReviewSchema>;
+export type ModerateReviewAction = ModerateReviewRequest['action'];

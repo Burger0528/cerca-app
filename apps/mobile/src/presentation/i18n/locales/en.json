@@ -112,67 +112,6 @@
       }
     }
   },
-  "bookings": {
-    "tabTitle": "Bookings",
-    "title": "Your bookings",
-    "scheduledFor": "Scheduled for {{date}}",
-    "acceptIn_one": "Tomorrow",
-    "acceptIn_other": "In {{count}} days",
-    "role": {
-      "customer": "I booked",
-      "provider": "I provide"
-    },
-    "status": {
-      "requested": "Waiting for the provider",
-      "accepted": "Accepted",
-      "declined": "Declined",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
-    },
-    "action": {
-      "accept": "Accept",
-      "decline": "Decline",
-      "complete": "Mark as done",
-      "cancel": "Cancel",
-      "review": "Write a review"
-    },
-    "empty": {
-      "customer": {
-        "title": "You haven't booked anything yet",
-        "body": "Find a service you need and request it."
-      },
-      "provider": {
-        "title": "No one has booked you yet",
-        "body": "Requests for your listings will show up here."
-      }
-    },
-    "a11y": {
-      "row": "Booking. {{status}}. {{date}}."
-    }
-  },
-  "review": {
-    "title": "How did it go?",
-    "rating": "Your rating, out of 5",
-    "body": "Your review",
-    "bodyPlaceholder": "What went well, what could be better.",
-    "submit": "Post review",
-    "sending": "Posting…",
-    "blocked": {
-      "not_your_booking": "This booking isn't yours, so you can't review it.",
-      "not_completed": "You can review it once the service is done.",
-      "already_reviewed": "You already reviewed this booking.",
-      "window_closed": "The 30-day window to review this booking has closed."
-    }
-  },
-  "booking": {
-    "request": "Request this service",
-    "requesting": "Sending your request…",
-    "requested": "Request sent",
-    "blocked": {
-      "own_listing": "This is your own listing.",
-      "not_bookable": "This listing isn't taking bookings right now."
-    }
-  },
   "moderation": {
     "tabTitle": "Reports",
     "reports": {
@@ -192,15 +131,6 @@
       },
       "a11y": {
         "row": "Report: {{reason}}. {{status}}."
-      }
-    },
-    "reviews": {
-      "action": {
-        "remove": "Remove review",
-        "keep": "Keep it"
-      },
-      "blocked": {
-        "is_author": "It's your own review, so you can't moderate it."
       }
     }
   },
@@ -252,7 +182,11 @@
         "body": "It may have been removed, or the link is wrong."
       },
       "share": "Share",
-      "shareMessage": "{{title}} on Cerca: {{url}}"
+      "shareMessage": "{{title}} on Cerca: {{url}}",
+      "book": "Book",
+      "booking": "Booking…",
+      "bookOwnListing": "You can't book your own listing",
+      "bookSuccess": "Request sent. We'll let you know when the provider responds."
     },
     "rating": {
       "reviews_one": "{{count}} review",
@@ -268,12 +202,61 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. {{distance}} away."
+    }
+  },
+  "bookings": {
+    "title": "My bookings",
+    "role": {
+      "customer": "As customer",
+      "provider": "As provider"
     },
-    "reviews": {
-      "title_zero": "No reviews yet",
-      "title_one": "{{count}} review",
-      "title_other": "{{count}} reviews",
-      "rating": "{{rating}} out of 5"
+    "status": {
+      "requested": "Requested",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "row": {
+      "asCustomer": "Booking sent",
+      "asProvider": "Booking received"
+    },
+    "empty": {
+      "title": "No bookings yet",
+      "body": "When you book or receive a request, it'll show up here."
+    },
+    "actions": {
+      "accept": "Accept",
+      "complete": "Mark as completed",
+      "cancel": "Cancel booking",
+      "declineHeading": "Reason for declining"
+    },
+    "declineReason": {
+      "unavailable": "I'm not available",
+      "not_a_fit": "Not a fit for what I offer",
+      "other": "Other reason"
+    },
+    "explain": {
+      "requested": "Waiting for the provider's response.",
+      "accepted": "Confirmed. See you soon.",
+      "declined": "The provider couldn't accept this booking.",
+      "completed": "Booking completed.",
+      "cancelled": "This booking was cancelled."
+    },
+    "review": {
+      "rating": "Rating",
+      "bodyPlaceholder": "Tell us how it went",
+      "submit": "Submit review",
+      "success": "Thanks, your review is live.",
+      "blocked": {
+        "not_your_booking": "This isn't your booking.",
+        "not_completed": "This booking isn't completed yet.",
+        "already_reviewed": "You already reviewed this booking.",
+        "window_closed": "The review window has closed."
+      }
+    },
+    "a11y": {
+      "row": "{{status}}. {{role}}."
     }
   },
   "location": {
@@ -315,6 +298,13 @@
     "category": {
       "required": "Pick a category."
     },
+    "rating": {
+      "required": "Pick a rating."
+    },
+    "reviewBody": {
+      "required": "Write something about your experience.",
+      "tooLong": "That review is too long."
+    },
     "title": {
       "tooShort": "At least 3 characters.",
       "tooLong": "That title is too long."
@@ -331,13 +321,6 @@
     },
     "currency": {
       "invalid": "Unsupported currency."
-    },
-    "rating": {
-      "required": "Pick a rating from 1 to 5."
-    },
-    "reviewBody": {
-      "required": "Write a few words.",
-      "tooLong": "That review is too long."
     }
   }
 }

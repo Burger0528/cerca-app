@@ -11,19 +11,25 @@
  * detalle, así que no hace falta pedirla de nuevo. Si el detalle se abre por deep link
  * (sin pasar por la lista), no hay distancia que enseñar y la línea se omite: el dato no
  * se inventa en el cliente.
+ *
+ * La lista de reseñas al final va virtualizada (`FlatList`), con `keyExtractor` estable y
+ * `renderItem`/`ReviewRow` memoizados -- una fila que no cambió no se vuelve a pintar
+ * cuando llega la siguiente página.
  */
-import type { ModerateReviewAction, Review } from '@cerca/contract';
 import { formatDistance } from '@cerca/contract';
-import * as Linking from 'expo-linking';
+import type { ReviewResponse } from '@cerca/contract';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Share, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HttpError } from '../../domain/errors/app-error';
+import {
+  ContractViolationError,
+  HttpError,
+  NetworkError,
+  TimeoutError,
+} from '../../domain/errors/app-error';
 import { useActor } from '../auth/use-can';
-import { BookListingButton } from '../components/book-listing-button';
 import { Button } from '../components/button';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
 import { ReviewRow } from '../components/review-row';
@@ -31,8 +37,8 @@ import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
-import { useModerateReview } from '../hooks/use-moderate-review';
-import { messageKeyForError } from '../i18n/error-message-key';
+import { useRequestBooking } from '../hooks/use-request-booking';
+import type { FeedbackMessageKey } from '../i18n/message-keys';
 
 export function ListingDetailScreen() {
   const { id, distanceMeters } = useLocalSearchParams<{
@@ -41,32 +47,15 @@ export function ListingDetailScreen() {
   }>();
   const { t } = useTranslation();
   const locale = useLocale();
-  const actor = useActor();
   const detail = useListingDetail(id);
+  const actor = useActor();
+  const booking = useRequestBooking();
   const reviews = useListingReviews(id);
 
-  const moderation = useModerateReview(id);
-  const { mutate: moderateReview } = moderation;
-  const moderatingId = moderation.isPending ? moderation.variables.reviewId : null;
-
-  const onModerate = useCallback(
-    (reviewId: string, action: ModerateReviewAction) => moderateReview({ reviewId, action }),
-    [moderateReview],
-  );
-
-  const keyExtractor = useCallback((review: Review) => review.id, []);
-
+  const keyExtractor = useCallback((review: ReviewResponse) => review.id, []);
   const renderReview = useCallback(
-    ({ item }: { item: Review }) => (
-      <ReviewRow
-        review={item}
-        actor={actor}
-        locale={locale}
-        isBusy={item.id === moderatingId}
-        onModerate={onModerate}
-      />
-    ),
-    [actor, locale, moderatingId, onModerate],
+    ({ item }: { item: ReviewResponse }) => <ReviewRow review={item} />,
+    [],
   );
 
   if (detail.isPending) {
@@ -93,9 +82,7 @@ export function ListingDetailScreen() {
 
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-surface px-8">
-        <Text className="text-center text-base text-muted">
-          {t(messageKeyForError(detail.error))}
-        </Text>
+        <Text className="text-center text-base text-muted">{t(messageKeyFor(detail.error))}</Text>
         <Button variant="secondary" onPress={() => void detail.refetch()}>
           {t('common.retry')}
         </Button>
@@ -110,11 +97,10 @@ export function ListingDetailScreen() {
     distanceMeters === undefined
       ? null
       : formatDistance({ meters: Number(distanceMeters) }, locale);
+  const isOwnListing = actor !== null && actor.id === listing.ownerId;
 
-  // El detalle ES la lista de reseñas, con el anuncio de cabecera. Así las reseñas se
-  // virtualizan sin anidar una lista dentro de un scroll, que es lo que rompe el reciclado.
-  const header = (
-    <View className="gap-3 px-4 py-4">
+  return (
+    <View className="flex-1 gap-3 bg-surface px-4 py-4">
       <View className="flex-row items-center gap-2">
         <Text className="flex-1 text-xl font-semibold text-foreground">{listing.title}</Text>
         {listing.status === 'published' ? null : <StatusBadge status={listing.status} />}
@@ -128,18 +114,13 @@ export function ListingDetailScreen() {
 
       <Text className="text-base text-foreground">{listing.description}</Text>
 
-      {actor === null ? null : <BookListingButton listing={listing} actor={actor} />}
-
       <Button
         variant="secondary"
-        className="self-start"
         onPress={() => {
           void Share.share({
             message: t('listing.detail.shareMessage', {
               title: listing.title,
-              // Construido por expo-linking a partir del esquema y de la RUTA REAL. Escrito
-              // a mano era `cerca://listing/…`, en singular, y no abría nada.
-              url: Linking.createURL(`/listings/${listing.id}`),
+              url: `cerca://listing/${listing.id}`,
             }),
           });
         }}
@@ -147,19 +128,34 @@ export function ListingDetailScreen() {
         {t('listing.detail.share')}
       </Button>
 
-      <Text className="pt-2 text-lg font-semibold text-foreground">
-        {t('listing.reviews.title', { count: listing.ratingCount })}
-      </Text>
-    </View>
-  );
+      <Button
+        isDisabled={isOwnListing}
+        isLoading={booking.isPending}
+        onPress={() => booking.mutate({ listingId: listing.id })}
+      >
+        {booking.isPending ? t('listing.detail.booking') : t('listing.detail.book')}
+      </Button>
 
-  return (
-    <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
+      {isOwnListing ? (
+        <Text className="text-center text-sm text-muted">{t('listing.detail.bookOwnListing')}</Text>
+      ) : null}
+
+      {booking.isSuccess ? (
+        <Text className="text-center text-sm text-muted" accessibilityLiveRegion="polite">
+          {t('listing.detail.bookSuccess')}
+        </Text>
+      ) : null}
+
+      {booking.isError ? (
+        <Text className="text-center text-sm text-danger" accessibilityLiveRegion="polite">
+          {t(messageKeyFor(booking.error))}
+        </Text>
+      ) : null}
+
       <FlatList
         data={reviews.reviews}
         keyExtractor={keyExtractor}
         renderItem={renderReview}
-        ListHeaderComponent={header}
         removeClippedSubviews
         onEndReachedThreshold={0.6}
         onEndReached={() => {
@@ -169,6 +165,15 @@ export function ListingDetailScreen() {
           reviews.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : null
         }
       />
-    </SafeAreaView>
+    </View>
   );
+}
+
+function messageKeyFor(error: unknown): FeedbackMessageKey {
+  if (error instanceof NetworkError) return 'errors.network';
+  if (error instanceof TimeoutError) return 'errors.timeout';
+  if (error instanceof ContractViolationError) return 'errors.contract';
+  if (error instanceof HttpError) return error.status >= 500 ? 'errors.server' : 'errors.unknown';
+
+  return 'errors.unknown';
 }

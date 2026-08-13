@@ -35,13 +35,6 @@ export const categoryKeys = {
   list: () => [...categoryKeys.all, 'list'] as const,
 } as const;
 
-export const bookingKeys = {
-  all: ['bookings'] as const,
-  lists: () => [...bookingKeys.all, 'list'] as const,
-  list: (role: string) => [...bookingKeys.lists(), role] as const,
-  detail: (bookingId: string) => [...bookingKeys.all, 'detail', bookingId] as const,
-} as const;
-
 export const reportKeys = {
   all: ['reports'] as const,
   list: () => [...reportKeys.all, 'list'] as const,
@@ -50,4 +43,9 @@ export const reportKeys = {
 export const sessionKeys = {
   all: ['session'] as const,
   me: () => [...sessionKeys.all, 'me'] as const,
+} as const;
+
+export const reviewKeys = {
+  all: ['reviews'] as const,
+  forListing: (listingId: string) => [...reviewKeys.all, 'listing', listingId] as const,
 } as const;
