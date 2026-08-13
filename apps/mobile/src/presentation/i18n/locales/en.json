@@ -242,6 +242,18 @@
       "declined": "The provider couldn't accept this booking.",
       "completed": "Booking completed.",
       "cancelled": "This booking was cancelled."
+    },
+    "review": {
+      "rating": "Rating",
+      "bodyPlaceholder": "Tell us how it went",
+      "submit": "Submit review",
+      "success": "Thanks, your review is live.",
+      "blocked": {
+        "not_your_booking": "This isn't your booking.",
+        "not_completed": "This booking isn't completed yet.",
+        "already_reviewed": "You already reviewed this booking.",
+        "window_closed": "The review window has closed."
+      }
     }
   },
   "location": {

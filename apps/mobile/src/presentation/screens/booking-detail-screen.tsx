@@ -8,6 +8,7 @@
  * Ninguna comprobación de aquí protege nada -- es UX, la autorización real la hace el
  * backend con el 403 correspondiente si se fuerza.
  */
+import { canReviewBooking } from '@cerca/contract';
 import type { BookingResponse } from '@cerca/contract';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,7 @@ import { useActor } from '../auth/use-can';
 import { BookingStatusExplanation } from '../components/booking-status-explanation';
 import { Button } from '../components/button';
 import { DeclineButtons } from '../components/decline-buttons';
+import { ReviewForm } from '../components/review-form';
 import {
   useAcceptBooking,
   useCancelBooking,
@@ -24,6 +26,7 @@ import {
   useDeclineBooking,
 } from '../hooks/use-booking-actions';
 import { useBookingDetail } from '../hooks/use-booking-detail';
+import { useWriteReview } from '../hooks/use-write-review';
 import { messageKeyForError } from '../i18n/error-message-key';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -38,6 +41,7 @@ export function BookingDetailScreen() {
   const decline = useDeclineBooking();
   const complete = useCompleteBooking();
   const cancel = useCancelBooking();
+  const review = useWriteReview();
 
   if (detail.isPending) {
     return (
@@ -63,6 +67,10 @@ export function BookingDetailScreen() {
   const booking: BookingResponse = detail.data;
   const busy = accept.isPending || decline.isPending || complete.isPending || cancel.isPending;
   const isCustomer = actor !== null && actor.id === booking.customerId;
+  const eligibility =
+    actor === null
+      ? ({ ok: false, reason: 'not_your_booking' } as const)
+      : canReviewBooking(actor, booking, new Date());
 
   return (
     <View className="flex-1 gap-3 bg-surface px-4 py-4">
@@ -120,6 +128,17 @@ export function BookingDetailScreen() {
           ) : null}
         </>
       )}
+
+      {isCustomer ? (
+        <ReviewForm
+          eligibility={eligibility}
+          isSubmitting={review.isPending}
+          isSuccess={review.isSuccess}
+          onSubmit={(rating, body) =>
+            review.mutate({ bookingId: booking.id, request: { rating, body } })
+          }
+        />
+      ) : null}
     </View>
   );
 }

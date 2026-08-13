@@ -242,6 +242,18 @@
       "declined": "El proveedor no pudo aceptar esta reserva.",
       "completed": "Reserva completada.",
       "cancelled": "Esta reserva fue cancelada."
+    },
+    "review": {
+      "rating": "Puntuación",
+      "bodyPlaceholder": "Cuéntanos cómo te fue",
+      "submit": "Enviar reseña",
+      "success": "Gracias, tu reseña ya está publicada.",
+      "blocked": {
+        "not_your_booking": "Esta no es tu reserva.",
+        "not_completed": "Esta reserva todavía no está completada.",
+        "already_reviewed": "Ya reseñaste esta reserva.",
+        "window_closed": "El plazo para reseñar ya cerró."
+      }
     }
   },
   "location": {
