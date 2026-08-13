@@ -22,6 +22,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Share, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   ContractViolationError,
@@ -100,7 +101,7 @@ export function ListingDetailScreen() {
   const isOwnListing = actor !== null && actor.id === listing.ownerId;
 
   return (
-    <View className="flex-1 gap-3 bg-surface px-4 py-4">
+    <SafeAreaView className="flex-1 gap-3 bg-surface px-4 py-4" edges={['top']}>
       <View className="flex-row items-center gap-2">
         <Text className="flex-1 text-xl font-semibold text-foreground">{listing.title}</Text>
         {listing.status === 'published' ? null : <StatusBadge status={listing.status} />}
@@ -165,7 +166,7 @@ export function ListingDetailScreen() {
           reviews.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : null
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
