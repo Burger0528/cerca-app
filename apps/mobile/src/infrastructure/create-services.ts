@@ -19,6 +19,7 @@ import {
 } from './listings/http-listing-gateway';
 import { createExpoLocationAdapter } from './location/expo-location-adapter';
 import { createHttpModerationGateway } from './moderation/http-moderation-gateway';
+import { createSecureLanguagePreference } from './preferences/secure-language-preference';
 import { createHttpReviewGateway } from './review/http-review-gateway';
 import { createHttpAuthGateway } from './session/http-auth-gateway';
 import { createSecureSessionStorage } from './session/secure-session-storage';
@@ -70,6 +71,7 @@ export function createServices(options: CreateServicesOptions = {}): Services {
     categoryGateway: createHttpCategoryGateway(http),
     moderationGateway: createHttpModerationGateway(http),
     location: createExpoLocationAdapter(),
+    languagePreference: createSecureLanguagePreference(),
     now,
     newIdempotencyKey: randomUUID,
   };
