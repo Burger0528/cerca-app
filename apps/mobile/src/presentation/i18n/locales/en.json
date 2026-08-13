@@ -254,6 +254,9 @@
         "already_reviewed": "You already reviewed this booking.",
         "window_closed": "The review window has closed."
       }
+    },
+    "a11y": {
+      "row": "{{status}}. {{role}}."
     }
   },
   "location": {

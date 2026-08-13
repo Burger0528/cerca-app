@@ -254,6 +254,9 @@
         "already_reviewed": "Ya reseñaste esta reserva.",
         "window_closed": "El plazo para reseñar ya cerró."
       }
+    },
+    "a11y": {
+      "row": "{{status}}. {{role}}."
     }
   },
   "location": {
