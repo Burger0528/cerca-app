@@ -18,6 +18,7 @@ import {
   bindAppStateToFocusManager,
   createQueryClient,
 } from '../infrastructure/query/query-client';
+import { useRestoreLanguage } from '../presentation/hooks/use-language';
 import { initI18n } from '../presentation/i18n/index';
 import { AppProviders } from '../presentation/providers/app-providers';
 import { useSession } from '../presentation/providers/session-provider';
@@ -55,6 +56,8 @@ export default function RootLayout() {
 function RootNavigator() {
   const { state } = useSession();
   const isRestoring = state.status === 'restoring';
+
+  useRestoreLanguage();
 
   // Todos los hooks ANTES de cualquier return: React los identifica por orden de llamada,
   // y un `useMemo` detrás de un early return cambia de posición entre renders.

@@ -11,6 +11,7 @@ import type { BookingGatewayPort } from './booking/ports';
 import type { CategoryGatewayPort, ListingGatewayPort } from './listings/ports';
 import type { LocationPort } from './location/location';
 import type { ModerationGatewayPort } from './moderation/ports';
+import type { LanguagePreferencePort } from './preferences/ports';
 import type { ReviewGatewayPort } from './review/ports';
 import type { AuthGatewayPort, SessionManagerPort } from './session/ports';
 
@@ -23,6 +24,7 @@ export interface Services {
   readonly categoryGateway: CategoryGatewayPort;
   readonly moderationGateway: ModerationGatewayPort;
   readonly location: LocationPort;
+  readonly languagePreference: LanguagePreferencePort;
 
   /** El reloj, también inyectado: un test que dependa de `Date.now()` real es un test lento. */
   readonly now: () => number;

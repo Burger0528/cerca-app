@@ -47,6 +47,11 @@
       "body": "Publica anuncios y recibe reservas. Conservas todo lo que ya tienes.",
       "action": "Hazte proveedor",
       "submitting": "Preparándolo…"
+    },
+    "language": {
+      "title": "Idioma",
+      "es": "Español",
+      "en": "English"
     }
   },
   "provider": {
@@ -256,7 +261,7 @@
       }
     },
     "a11y": {
-      "row": "{{status}}. {{role}}."
+      "row": "{{status}}. {{role}}. {{date}}."
     }
   },
   "location": {

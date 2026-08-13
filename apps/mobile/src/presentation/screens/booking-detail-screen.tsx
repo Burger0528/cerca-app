@@ -13,6 +13,7 @@ import type { BookingResponse } from '@cerca/contract';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useActor } from '../auth/use-can';
 import { BookingStatusExplanation } from '../components/booking-status-explanation';
@@ -73,7 +74,7 @@ export function BookingDetailScreen() {
       : canReviewBooking(actor, booking, new Date());
 
   return (
-    <View className="flex-1 gap-3 bg-surface px-4 py-4">
+    <SafeAreaView className="flex-1 gap-3 bg-surface px-4 py-4" edges={['top']}>
       <Text className="text-2xl font-bold text-foreground">
         {t(`bookings.status.${booking.status}`)}
       </Text>
@@ -139,6 +140,6 @@ export function BookingDetailScreen() {
           }
         />
       ) : null}
-    </View>
+    </SafeAreaView>
   );
 }

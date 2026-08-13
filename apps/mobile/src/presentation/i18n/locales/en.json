@@ -47,6 +47,11 @@
       "body": "Publish listings and take bookings. You keep everything you already have.",
       "action": "Become a provider",
       "submitting": "Setting you up…"
+    },
+    "language": {
+      "title": "Language",
+      "es": "Español",
+      "en": "English"
     }
   },
   "provider": {
@@ -256,7 +261,7 @@
       }
     },
     "a11y": {
-      "row": "{{status}}. {{role}}."
+      "row": "{{status}}. {{role}}. {{date}}."
     }
   },
   "location": {

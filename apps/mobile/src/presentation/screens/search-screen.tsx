@@ -27,6 +27,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   ContractViolationError,
@@ -127,7 +128,7 @@ export function SearchScreen() {
   const isEmpty = !search.isPending && !search.isError && search.listings.length === 0;
 
   return (
-    <View className="flex-1 bg-surface">
+    <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
       <View className="gap-3 px-4 py-3">
         <TextInput
           className="min-h-touch rounded-xl border border-subtle px-4 text-base text-foreground placeholder:text-muted"
@@ -241,7 +242,7 @@ export function SearchScreen() {
         }}
         onClose={() => setFiltersOpen(false)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

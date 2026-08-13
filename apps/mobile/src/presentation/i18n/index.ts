@@ -10,13 +10,14 @@ import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import {
+  FALLBACK_LANGUAGE,
+  isSupportedLanguage,
+  type SupportedLanguage,
+} from '../../domain/preferences/language';
+
 import en from './locales/en.json';
 import es from './locales/es.json';
-
-export const SUPPORTED_LANGUAGES = ['en', 'es'] as const;
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
-
-export const FALLBACK_LANGUAGE: SupportedLanguage = 'es';
 
 /**
  * El idioma del teléfono, no una preferencia guardada.
@@ -27,15 +28,11 @@ export const FALLBACK_LANGUAGE: SupportedLanguage = 'es';
  */
 export function deviceLanguage(): SupportedLanguage {
   const code = getLocales()[0]?.languageCode ?? FALLBACK_LANGUAGE;
-  return isSupported(code) ? code : FALLBACK_LANGUAGE;
+  return isSupportedLanguage(code) ? code : FALLBACK_LANGUAGE;
 }
 
 export function deviceLocale(): string {
   return getLocales()[0]?.languageTag ?? 'es-MX';
-}
-
-function isSupported(code: string): code is SupportedLanguage {
-  return SUPPORTED_LANGUAGES.some((language) => language === code);
 }
 
 export function initI18n(): typeof i18n {
