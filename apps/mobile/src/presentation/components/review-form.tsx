@@ -34,9 +34,12 @@ export function ReviewForm({ eligibility, isSubmitting, isSuccess, onSubmit }: R
 
   if (!eligibility.ok) {
     return (
-      <Text className="text-center text-sm text-muted">
-        {t(`bookings.review.blocked.${eligibility.reason}`)}
-      </Text>
+      <View className="gap-2">
+        <Button isDisabled>{t('bookings.review.submit')}</Button>
+        <Text className="text-center text-sm text-muted">
+          {t(`bookings.review.blocked.${eligibility.reason}`)}
+        </Text>
+      </View>
     );
   }
 
