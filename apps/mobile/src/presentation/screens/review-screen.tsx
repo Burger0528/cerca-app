@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAnnounceFirstError } from '../a11y/use-announce-first-error';
 import { useActor } from '../auth/use-can';
 import { Button } from '../components/button';
 import { Chip } from '../components/chip';
@@ -32,6 +33,8 @@ export function ReviewScreen() {
     defaultValues: { rating: 5, body: '' },
     mode: 'onBlur',
   });
+
+  useAnnounceFirstError(form.formState.errors, form.formState.submitCount);
 
   const submit = form.handleSubmit(async (values) => {
     await review.mutateAsync(values);

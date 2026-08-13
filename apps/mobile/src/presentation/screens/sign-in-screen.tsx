@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 
 import { HttpError } from '../../domain/errors/app-error';
+import { useAnnounceFirstError } from '../a11y/use-announce-first-error';
 import { Button } from '../components/button';
 import { TextField } from '../components/text-field';
 import type { FeedbackMessageKey } from '../i18n/message-keys';
@@ -34,6 +35,8 @@ export function SignInScreen() {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
+
+  useAnnounceFirstError(form.formState.errors, form.formState.submitCount);
 
   const onSubmit = form.handleSubmit(async (credentials) => {
     setSubmitError(null);
