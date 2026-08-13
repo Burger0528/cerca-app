@@ -10,49 +10,41 @@ import type { City } from './location';
  *
  * TODO(sprint 2): moverlo a `GET /cities` cuando haya cobertura en más de un país, y dejar
  * esto como semilla del primer arranque.
+ *
+ * Las coordenadas son LAS MISMAS que las de `CITIES` en el seed del backend, a propósito.
+ * Cuando no coincidían, elegir una ciudad del selector dejaba la búsqueda vacía: la app
+ * preguntaba por servicios a 3.000 km de donde estaban los anuncios, y parecía rota.
  */
 export const FALLBACK_CITIES: readonly City[] = [
   {
-    id: 'mx-cdmx',
-    name: 'Ciudad de México',
-    countryCode: 'MX',
-    coordinates: { latitude: 19.4326, longitude: -99.1332 },
+    id: 'co-bog',
+    name: 'Bogotá',
+    countryCode: 'CO',
+    coordinates: { latitude: 4.711, longitude: -74.0721 },
   },
   {
-    id: 'mx-gdl',
-    name: 'Guadalajara',
-    countryCode: 'MX',
-    coordinates: { latitude: 20.6597, longitude: -103.3496 },
+    id: 'co-mde',
+    name: 'Medellín',
+    countryCode: 'CO',
+    coordinates: { latitude: 6.2442, longitude: -75.5812 },
   },
   {
-    id: 'mx-mty',
-    name: 'Monterrey',
-    countryCode: 'MX',
-    coordinates: { latitude: 25.6866, longitude: -100.3161 },
+    id: 'co-clo',
+    name: 'Cali',
+    countryCode: 'CO',
+    coordinates: { latitude: 3.4516, longitude: -76.532 },
   },
   {
-    id: 'mx-pue',
-    name: 'Puebla',
-    countryCode: 'MX',
-    coordinates: { latitude: 19.0414, longitude: -98.2063 },
+    id: 'co-baq',
+    name: 'Barranquilla',
+    countryCode: 'CO',
+    coordinates: { latitude: 10.9685, longitude: -74.7813 },
   },
   {
-    id: 'mx-tij',
-    name: 'Tijuana',
-    countryCode: 'MX',
-    coordinates: { latitude: 32.5149, longitude: -117.0382 },
-  },
-  {
-    id: 'mx-mid',
-    name: 'Mérida',
-    countryCode: 'MX',
-    coordinates: { latitude: 20.9674, longitude: -89.5926 },
-  },
-  {
-    id: 'mx-qro',
-    name: 'Querétaro',
-    countryCode: 'MX',
-    coordinates: { latitude: 20.5888, longitude: -100.3899 },
+    id: 'co-ctg',
+    name: 'Cartagena',
+    countryCode: 'CO',
+    coordinates: { latitude: 10.391, longitude: -75.4794 },
   },
 ];
 
