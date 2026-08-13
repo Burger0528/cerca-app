@@ -11,6 +11,7 @@ import { Platform } from 'react-native';
 import type { Services } from '../domain/services';
 import type { SessionStoragePort } from '../domain/session/ports';
 
+import { createHttpBookingGateway } from './bookings/http-booking-gateway';
 import { createHttpClient } from './http/http-client';
 import {
   createHttpCategoryGateway,
@@ -22,11 +23,6 @@ import { createHttpAuthGateway } from './session/http-auth-gateway';
 import { createSecureSessionStorage } from './session/secure-session-storage';
 import { createSessionManager } from './session/session-manager';
 import { createWebSessionStorage } from './session/web-session-storage';
-
-export interface CreateServicesOptions {
-  /** Se dispara cuando el refresh token muere: la app tiene que mandar a login. */
-  readonly onSessionLost?: () => void;
-}
 
 /**
  * El llavero solo existe en el teléfono.
@@ -43,13 +39,12 @@ function createPlatformSessionStorage(): SessionStoragePort {
   return Platform.OS === 'web' ? createWebSessionStorage() : createSecureSessionStorage();
 }
 
-export function createServices(options: CreateServicesOptions = {}): Services {
+export function createServices(): Services {
   const now = Date.now;
 
   const sessionManager = createSessionManager({
     storage: createPlatformSessionStorage(),
     now,
-    ...(options.onSessionLost === undefined ? {} : { onSessionLost: options.onSessionLost }),
   });
 
   // El cliente pregunta el token al manager en cada petición en vez de recibir una copia.
@@ -64,6 +59,7 @@ export function createServices(options: CreateServicesOptions = {}): Services {
     authGateway: createHttpAuthGateway({ http, now }),
     listingGateway: createHttpListingGateway(http),
     categoryGateway: createHttpCategoryGateway(http),
+    bookingGateway: createHttpBookingGateway(http),
     moderationGateway: createHttpModerationGateway(http),
     location: createExpoLocationAdapter(),
     now,

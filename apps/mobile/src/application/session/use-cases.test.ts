@@ -96,6 +96,28 @@ describe('restoreSession', () => {
     expect(sessionManager.refresh).toHaveBeenCalledTimes(1);
   });
 
+  /**
+   * El arranque en el metro: el token caducó y no hay red para renovarlo. Eso no prueba
+   * que la sesión esté muerta, así que no se echa al usuario.
+   */
+  it('stays signed in when the network fails while renewing', async () => {
+    const sessionManager = managerStub({
+      restore: jest.fn(async () => sessionExpiringAt(NOW - 1)),
+      refresh: jest.fn(async () => {
+        throw new Error('sin red');
+      }),
+    });
+
+    const state = await restoreSession({
+      sessionManager,
+      authGateway: gatewayStub(),
+      now: () => NOW,
+    });
+
+    expect(state).toEqual({ status: 'signed-in', actor });
+    expect(sessionManager.clear).not.toHaveBeenCalled();
+  });
+
   it('signs out and wipes the keychain when the refresh token is dead', async () => {
     const sessionManager = managerStub({
       restore: jest.fn(async () => sessionExpiringAt(NOW - 1)),

@@ -29,6 +29,9 @@ export const VALIDATION_MESSAGE_KEYS = [
   'validation.description.tooLong',
   'validation.amount.invalid',
   'validation.minimumHours.invalid',
+  'validation.rating.required',
+  'validation.reviewBody.required',
+  'validation.reviewBody.tooLong',
 ] as const;
 
 export type ValidationMessageKey = (typeof VALIDATION_MESSAGE_KEYS)[number];
@@ -66,6 +69,8 @@ const CODE_TO_MESSAGE_KEY: Readonly<Record<string, FeedbackMessageKey>> = {
   EMAIL_TAKEN: 'auth.errors.emailTaken',
   ACCOUNT_SUSPENDED: 'auth.errors.accountSuspended',
   ACCOUNT_UNAVAILABLE: 'auth.errors.accountSuspended',
+  // Un 401 con la sesión caducada salía como "algo ha salido mal", que no dice qué hacer.
+  UNAUTHENTICATED: 'auth.errors.sessionExpired',
   INVALID_REFRESH_TOKEN: 'auth.errors.sessionExpired',
   REFRESH_TOKEN_EXPIRED: 'auth.errors.sessionExpired',
   REFRESH_TOKEN_REUSED: 'auth.errors.sessionExpired',

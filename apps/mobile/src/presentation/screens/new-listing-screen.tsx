@@ -13,6 +13,7 @@ import {
   toCreateListingRequest,
 } from '../../domain/listings/new-listing-form';
 import { coordinatesOf } from '../../domain/location/location';
+import { useAnnounceFirstError } from '../a11y/use-announce-first-error';
 import { Button } from '../components/button';
 import { CategoryStep } from '../components/new-listing/category-step';
 import { DetailsStep } from '../components/new-listing/details-step';
@@ -46,6 +47,8 @@ export function NewListingScreen() {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
+
+  useAnnounceFirstError(form.formState.errors, form.formState.submitCount);
 
   const stepIndex = STEPS.indexOf(step);
   const isLastStep = stepIndex === STEPS.length - 1;

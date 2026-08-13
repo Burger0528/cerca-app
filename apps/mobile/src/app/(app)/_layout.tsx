@@ -30,6 +30,7 @@ export default function AppLayout() {
     // vacía. La app no usa librería de iconos: las pestañas se distinguen por su texto.
     <Tabs screenOptions={{ headerShown: false, tabBarIcon: () => null }}>
       <Tabs.Screen name="index" options={{ title: t('search.tabTitle') }} />
+      <Tabs.Screen name="bookings" options={{ title: t('bookings.tabTitle') }} />
       <Tabs.Screen
         name="(provider)"
         options={{ title: t('provider.tabTitle'), href: isProvider ? undefined : null }}
@@ -38,6 +39,8 @@ export default function AppLayout() {
         name="(moderation)"
         options={{ title: t('moderation.tabTitle'), href: isModerator ? undefined : null }}
       />
+      {/* El detalle conserva la barra de pestañas pero no ES una pestaña. */}
+      <Tabs.Screen name="listings" options={{ href: null }} />
       <Tabs.Screen name="account" options={{ title: t('account.tabTitle') }} />
     </Tabs>
   );

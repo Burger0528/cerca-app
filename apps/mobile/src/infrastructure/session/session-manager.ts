@@ -12,19 +12,19 @@ import { HttpError, NetworkError } from '../../domain/errors/app-error';
 import type { SessionManagerPort, SessionStoragePort } from '../../domain/session/ports';
 import type { StoredSession } from '../../domain/session/session';
 import { expiresAtFrom } from '../../domain/session/session';
-import { API_BASE_URL } from '../http/api-config';
+import { API_BASE_URL, REQUEST_TIMEOUT_MS } from '../http/api-config';
 
 export interface SessionManagerDependencies {
   readonly storage: SessionStoragePort;
   readonly baseUrl?: string;
+  readonly timeoutMs?: number;
   readonly now?: () => number;
   readonly fetchImpl?: typeof fetch;
-  /** Se llama cuando el refresh token muere. La app tiene que echar al usuario. */
-  readonly onSessionLost?: () => void;
 }
 
 export function createSessionManager(deps: SessionManagerDependencies): SessionManagerPort {
   const baseUrl = deps.baseUrl ?? API_BASE_URL;
+  const timeoutMs = deps.timeoutMs ?? REQUEST_TIMEOUT_MS;
   const now = deps.now ?? Date.now;
   const doFetch = deps.fetchImpl ?? fetch;
 
@@ -34,8 +34,17 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
   /** El single-flight: mientras esta promesa exista, nadie más lanza un refresh. */
   let inFlight: Promise<string | null> | null = null;
 
+  const sessionLostListeners = new Set<() => void>();
+
   async function performRefresh(refreshToken: string): Promise<string | null> {
     let response: Response;
+
+    // El timeout NO es un detalle: esta petición corre al arrancar, antes de que se pinte
+    // ningún grupo de rutas. Con un `fetch` sin cortar, un backend inalcanzable dejaba la
+    // app en `restoring` para siempre, y eso en pantalla es un blanco sin explicación.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
       // `fetch` pelado y no el HttpClient: esta petición no lleva `Authorization`, y
       // hacerla pasar por el cliente crearía un ciclo (cliente → refresh → cliente).
@@ -43,11 +52,14 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ refreshToken }),
+        signal: controller.signal,
       });
     } catch (error) {
       // Sin red no se puede afirmar que la sesión esté muerta. Se propaga el error de red
       // para que la UI enseñe "sin conexión" en vez de mandar al usuario a login.
       throw new NetworkError(error);
+    } finally {
+      clearTimeout(timer);
     }
 
     if (response.status === 401 || response.status === 403) {
@@ -102,7 +114,7 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
           if (token === null) {
             await deps.storage.clear();
             current = null;
-            deps.onSessionLost?.();
+            for (const listener of sessionLostListeners) listener();
           }
           return token;
         })
@@ -121,6 +133,14 @@ export function createSessionManager(deps: SessionManagerDependencies): SessionM
     async clear(): Promise<void> {
       current = null;
       await deps.storage.clear();
+    },
+
+    onSessionLost(listener: () => void): () => void {
+      sessionLostListeners.add(listener);
+
+      return () => {
+        sessionLostListeners.delete(listener);
+      };
     },
   };
 }

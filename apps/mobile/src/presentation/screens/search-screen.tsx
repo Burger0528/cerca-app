@@ -16,6 +16,7 @@ import {
   formatDistance,
   hasActiveFilters,
 } from '@cerca/contract';
+import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -48,6 +49,7 @@ import { LocationGate } from './location-gate';
 
 export function SearchScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const locale = useLocale();
   const { fontScale } = useWindowDimensions();
   const { origin, blocker, isResolving } = useSearchOrigin();
@@ -90,11 +92,22 @@ export function SearchScreen() {
   // serviría de nada porque la prop cambiaría siempre.
   const keyExtractor = useCallback((listing: Listing) => listing.id, []);
 
+  // La distancia viaja como parámetro de ruta: el detalle no la recibe del backend y aquí
+  // ya se conoce, así que no hace falta volver a pedirla.
+  const openListing = useCallback(
+    (listing: Listing) =>
+      router.push({
+        pathname: '/listings/[id]',
+        params: { id: listing.id, distanceMeters: String(listing.distanceMeters) },
+      }),
+    [router],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: Listing }) => (
-      <ListingCard listing={item} locale={locale} height={rowHeight} />
+      <ListingCard listing={item} locale={locale} height={rowHeight} onPress={openListing} />
     ),
-    [locale, rowHeight],
+    [locale, rowHeight, openListing],
   );
 
   // Sin origen no hay búsqueda posible: se enseña la salida, no una lista vacía que parece

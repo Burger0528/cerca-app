@@ -4,6 +4,7 @@ import {
   listingDetailSchema,
   listingSchema,
   myListingSchema,
+  reviewSchema,
 } from '@cerca/contract';
 import type {
   Category,
@@ -13,6 +14,7 @@ import type {
   ListingDetail,
   ListingStatusAction,
   MyListing,
+  Review,
   UpdateListingRequest,
 } from '@cerca/contract';
 import { z } from 'zod';
@@ -31,6 +33,7 @@ import type { HttpClient, QueryValue } from '../http/http-client';
  * recompilarlo cientos de veces mientras la lista corre, que es justo cuando no sobra CPU.
  */
 const listingPageSchema = cursorPageSchema(listingSchema);
+const reviewPageSchema = cursorPageSchema(reviewSchema);
 const myListingPageSchema = cursorPageSchema(myListingSchema);
 const categoryListSchema = z.array(categorySchema);
 
@@ -56,6 +59,17 @@ export function createHttpListingGateway(http: HttpClient): ListingGatewayPort {
 
     detail(listingId: string, signal?: AbortSignal): Promise<ListingDetail> {
       return http.request({ path: `/listings/${listingId}`, signal }, listingDetailSchema);
+    },
+
+    listReviews(
+      listingId: string,
+      cursor: string | null,
+      signal?: AbortSignal,
+    ): Promise<CursorPage<Review>> {
+      return http.request(
+        { path: `/listings/${listingId}/reviews`, query: { cursor }, signal },
+        reviewPageSchema,
+      );
     },
 
     update(listingId: string, request: UpdateListingRequest): Promise<ListingDetail> {

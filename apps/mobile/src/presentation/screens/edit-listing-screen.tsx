@@ -20,6 +20,7 @@ import {
   toNewListingForm,
   toUpdateListingRequest,
 } from '../../domain/listings/new-listing-form';
+import { useAnnounceFirstError } from '../a11y/use-announce-first-error';
 import { Button } from '../components/button';
 import { DetailsStep } from '../components/new-listing/details-step';
 import { PricingStep } from '../components/new-listing/pricing-step';
@@ -40,6 +41,8 @@ export function EditListingScreen() {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
+
+  useAnnounceFirstError(form.formState.errors, form.formState.submitCount);
 
   const { reset } = form;
   const loaded = listing.data;

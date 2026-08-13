@@ -7,4 +7,6 @@ export * from './actor/index.ts';
 export * from './money/index.ts';
 export * from './schemas/index.ts';
 export * from './listing/index.ts';
+export * from './booking/index.ts';
+export * from './review/index.ts';
 export * from './http/index.ts';
