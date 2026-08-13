@@ -1,32 +1,33 @@
-import type { CursorPage, Review } from '@cerca/contract';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { listingKeys } from '../../application/listings/query-keys';
+import { reviewKeys } from '../../application/listings/query-keys';
+import type { ReviewListPage } from '../../domain/review/ports';
 import { useServices } from '../providers/services-provider';
 
-const INITIAL_CURSOR: string | null = null;
+const INITIAL_CURSOR: string | undefined = undefined;
 
 export function useListingReviews(listingId: string) {
-  const { listingGateway } = useServices();
+  const { reviewGateway } = useServices();
 
   const flatten = useCallback(
-    (data: { pages: CursorPage<Review>[] }): Review[] => data.pages.flatMap((page) => page.items),
+    (data: { pages: ReviewListPage[] }) => data.pages.flatMap((page) => page.items),
     [],
   );
 
   const query = useInfiniteQuery({
-    queryKey: [...listingKeys.detail(listingId), 'reviews'],
-    queryFn: ({ pageParam, signal }) => listingGateway.listReviews(listingId, pageParam, signal),
+    queryKey: reviewKeys.forListing(listingId),
+    queryFn: ({ pageParam, signal }) => reviewGateway.listForListing(listingId, pageParam, signal),
     initialPageParam: INITIAL_CURSOR,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     select: flatten,
   });
 
   return {
     reviews: query.data ?? [],
+    isPending: query.isPending,
+    fetchNextPage: query.fetchNextPage,
     hasNextPage: query.hasNextPage,
     isFetchingNextPage: query.isFetchingNextPage,
-    fetchNextPage: query.fetchNextPage,
   };
 }

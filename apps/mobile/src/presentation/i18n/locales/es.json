@@ -112,67 +112,6 @@
       }
     }
   },
-  "bookings": {
-    "tabTitle": "Reservas",
-    "title": "Tus reservas",
-    "scheduledFor": "Citado para el {{date}}",
-    "acceptIn_one": "Mañana",
-    "acceptIn_other": "En {{count}} días",
-    "role": {
-      "customer": "He reservado",
-      "provider": "Me han reservado"
-    },
-    "status": {
-      "requested": "Esperando al proveedor",
-      "accepted": "Aceptada",
-      "declined": "Rechazada",
-      "completed": "Completada",
-      "cancelled": "Cancelada"
-    },
-    "action": {
-      "accept": "Aceptar",
-      "decline": "Rechazar",
-      "complete": "Marcar como hecha",
-      "cancel": "Cancelar",
-      "review": "Escribir una reseña"
-    },
-    "empty": {
-      "customer": {
-        "title": "Todavía no has reservado nada",
-        "body": "Busca un servicio que necesites y solicítalo."
-      },
-      "provider": {
-        "title": "Todavía no te ha reservado nadie",
-        "body": "Las solicitudes de tus anuncios aparecerán aquí."
-      }
-    },
-    "a11y": {
-      "row": "Reserva. {{status}}. {{date}}."
-    }
-  },
-  "review": {
-    "title": "¿Qué tal fue?",
-    "rating": "Tu valoración, sobre 5",
-    "body": "Tu reseña",
-    "bodyPlaceholder": "Qué salió bien y qué se podría mejorar.",
-    "submit": "Publicar reseña",
-    "sending": "Publicando…",
-    "blocked": {
-      "not_your_booking": "Esta reserva no es tuya, así que no puedes reseñarla.",
-      "not_completed": "Podrás reseñarla cuando el servicio esté hecho.",
-      "already_reviewed": "Ya reseñaste esta reserva.",
-      "window_closed": "El plazo de 30 días para reseñar esta reserva ya terminó."
-    }
-  },
-  "booking": {
-    "request": "Solicitar este servicio",
-    "requesting": "Enviando tu solicitud…",
-    "requested": "Solicitud enviada",
-    "blocked": {
-      "own_listing": "Este anuncio es tuyo.",
-      "not_bookable": "Este anuncio no acepta reservas ahora mismo."
-    }
-  },
   "moderation": {
     "tabTitle": "Denuncias",
     "reports": {
@@ -192,15 +131,6 @@
       },
       "a11y": {
         "row": "Denuncia: {{reason}}. {{status}}."
-      }
-    },
-    "reviews": {
-      "action": {
-        "remove": "Retirar reseña",
-        "keep": "Dejarla"
-      },
-      "blocked": {
-        "is_author": "Es tu propia reseña, así que no puedes moderarla."
       }
     }
   },
@@ -252,7 +182,11 @@
         "body": "Puede que lo hayan retirado o que el enlace esté mal."
       },
       "share": "Compartir",
-      "shareMessage": "{{title}} en Cerca: {{url}}"
+      "shareMessage": "{{title}} en Cerca: {{url}}",
+      "book": "Reservar",
+      "booking": "Enviando…",
+      "bookOwnListing": "No puedes reservar tu propio anuncio",
+      "bookSuccess": "Solicitud enviada. Te avisamos cuando el proveedor responda."
     },
     "rating": {
       "reviews_one": "{{count}} reseña",
@@ -268,12 +202,61 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. A {{distance}}."
+    }
+  },
+  "bookings": {
+    "title": "Mis reservas",
+    "role": {
+      "customer": "Como cliente",
+      "provider": "Como proveedor"
     },
-    "reviews": {
-      "title_zero": "Todavía sin reseñas",
-      "title_one": "{{count}} reseña",
-      "title_other": "{{count}} reseñas",
-      "rating": "{{rating}} de 5"
+    "status": {
+      "requested": "Solicitada",
+      "accepted": "Aceptada",
+      "declined": "Rechazada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    },
+    "row": {
+      "asCustomer": "Reserva enviada",
+      "asProvider": "Reserva recibida"
+    },
+    "empty": {
+      "title": "Todavía no hay reservas",
+      "body": "Cuando reserves o recibas una solicitud, aparecerá aquí."
+    },
+    "actions": {
+      "accept": "Aceptar",
+      "complete": "Marcar como completada",
+      "cancel": "Cancelar reserva",
+      "declineHeading": "Motivo del rechazo"
+    },
+    "declineReason": {
+      "unavailable": "No tengo disponibilidad",
+      "not_a_fit": "No encaja con lo que ofrezco",
+      "other": "Otro motivo"
+    },
+    "explain": {
+      "requested": "Esperando respuesta del proveedor.",
+      "accepted": "Confirmada. Nos vemos pronto.",
+      "declined": "El proveedor no pudo aceptar esta reserva.",
+      "completed": "Reserva completada.",
+      "cancelled": "Esta reserva fue cancelada."
+    },
+    "review": {
+      "rating": "Puntuación",
+      "bodyPlaceholder": "Cuéntanos cómo te fue",
+      "submit": "Enviar reseña",
+      "success": "Gracias, tu reseña ya está publicada.",
+      "blocked": {
+        "not_your_booking": "Esta no es tu reserva.",
+        "not_completed": "Esta reserva todavía no está completada.",
+        "already_reviewed": "Ya reseñaste esta reserva.",
+        "window_closed": "El plazo para reseñar ya cerró."
+      }
+    },
+    "a11y": {
+      "row": "{{status}}. {{role}}."
     }
   },
   "location": {
@@ -315,6 +298,13 @@
     "category": {
       "required": "Elige una categoría."
     },
+    "rating": {
+      "required": "Elige una puntuación."
+    },
+    "reviewBody": {
+      "required": "Escribe algo sobre tu experiencia.",
+      "tooLong": "Esa reseña es demasiado larga."
+    },
     "title": {
       "tooShort": "Al menos 3 caracteres.",
       "tooLong": "Ese título es demasiado largo."
@@ -331,13 +321,6 @@
     },
     "currency": {
       "invalid": "Divisa no soportada."
-    },
-    "rating": {
-      "required": "Elige una valoración del 1 al 5."
-    },
-    "reviewBody": {
-      "required": "Escribe unas palabras.",
-      "tooLong": "Esa reseña es demasiado larga."
     }
   }
 }

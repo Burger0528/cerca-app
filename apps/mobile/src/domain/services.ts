@@ -7,20 +7,23 @@
  *
  * En un test, esto se rellena con dobles y la pantalla no se entera.
  */
-import type { BookingGatewayPort } from './bookings/ports';
+import type { BookingGatewayPort } from './booking/ports';
 import type { CategoryGatewayPort, ListingGatewayPort } from './listings/ports';
 import type { LocationPort } from './location/location';
 import type { ModerationGatewayPort } from './moderation/ports';
+import type { ReviewGatewayPort } from './review/ports';
 import type { AuthGatewayPort, SessionManagerPort } from './session/ports';
 
 export interface Services {
   readonly authGateway: AuthGatewayPort;
   readonly sessionManager: SessionManagerPort;
   readonly listingGateway: ListingGatewayPort;
-  readonly categoryGateway: CategoryGatewayPort;
   readonly bookingGateway: BookingGatewayPort;
+  readonly reviewGateway: ReviewGatewayPort;
+  readonly categoryGateway: CategoryGatewayPort;
   readonly moderationGateway: ModerationGatewayPort;
   readonly location: LocationPort;
+
   /** El reloj, también inyectado: un test que dependa de `Date.now()` real es un test lento. */
   readonly now: () => number;
   readonly newIdempotencyKey: () => string;
