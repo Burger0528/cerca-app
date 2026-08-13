@@ -129,7 +129,7 @@ export function ListingDetailScreen() {
       </Button>
 
       <Button
-        isDisabled={isOwnListing}
+        isDisabled={isOwnListing || booking.isSuccess}
         isLoading={booking.isPending}
         onPress={() => booking.mutate({ listingId: listing.id })}
       >
