@@ -17,8 +17,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useActor } from '../auth/use-can';
 import { BookingStatusExplanation } from '../components/booking-status-explanation';
+import { BOOKING_STATUS_STYLE } from '../components/booking-status-style';
 import { Button } from '../components/button';
 import { DeclineButtons } from '../components/decline-buttons';
+import { Icon } from '../components/icon';
 import { ReviewForm } from '../components/review-form';
 import {
   useAcceptBooking,
@@ -75,11 +77,20 @@ export function BookingDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 gap-3 bg-surface px-4 py-4" edges={['top']}>
-      <Text className="text-2xl font-bold text-foreground">
-        {t(`bookings.status.${booking.status}`)}
-      </Text>
+      {/* El estado manda en esta pantalla: es lo primero que se viene a mirar. */}
+      <View className="items-center gap-2 rounded-card border border-subtle bg-surface-raised px-4 py-6">
+        <Icon
+          name={BOOKING_STATUS_STYLE[booking.status].icon}
+          size={48}
+          className={BOOKING_STATUS_STYLE[booking.status].color}
+        />
 
-      <BookingStatusExplanation status={booking.status} />
+        <Text className={`text-2xl font-bold ${BOOKING_STATUS_STYLE[booking.status].color}`}>
+          {t(`bookings.status.${booking.status}`)}
+        </Text>
+
+        <BookingStatusExplanation status={booking.status} />
+      </View>
 
       {isCustomer ? (
         booking.status === 'requested' || booking.status === 'accepted' ? (

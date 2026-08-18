@@ -30,15 +30,15 @@ const PLACEHOLDER_KEYS = [
   'skeleton-8',
 ] as const;
 
+/** Misma ranura y misma caja que `ListingCard`: la silueta solo sirve si encaja al píxel. */
 function SkeletonRow({ height }: { height: number }) {
   return (
-    <View
-      className="justify-center gap-2 border-b border-subtle bg-surface px-4"
-      style={{ height }}
-    >
-      <View className="h-4 w-3/4 rounded bg-surface-sunken" />
-      <View className="h-5 w-2/5 rounded bg-surface-sunken" />
-      <View className="h-3 w-1/2 rounded bg-surface-sunken" />
+    <View style={{ height }} className="px-4 pb-3">
+      <View className="flex-1 justify-center gap-2 rounded-card border border-subtle bg-surface-raised px-4">
+        <View className="h-4 w-3/4 rounded bg-surface-sunken" />
+        <View className="h-5 w-2/5 rounded bg-surface-sunken" />
+        <View className="h-3 w-1/2 rounded bg-surface-sunken" />
+      </View>
     </View>
   );
 }

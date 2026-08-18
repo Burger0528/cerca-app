@@ -32,6 +32,7 @@ import {
 } from '../../domain/errors/app-error';
 import { useActor } from '../auth/use-can';
 import { Button } from '../components/button';
+import { Icon } from '../components/icon';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
 import { ReviewRow } from '../components/review-row';
 import { StatusBadge } from '../components/status-badge';
@@ -109,14 +110,23 @@ export function ListingDetailScreen() {
 
       <Text className="text-2xl font-bold text-foreground">{price}</Text>
 
-      <Text className="text-base text-muted">
-        {distance === null ? rating : `${rating} · ${distance}`}
-      </Text>
+      <View className="flex-row items-center gap-1">
+        <Icon name="rating" size={16} className="text-muted" />
+        <Text className="text-base text-muted">{rating}</Text>
 
-      <Text className="text-base text-foreground">{listing.description}</Text>
+        {distance === null ? null : (
+          <>
+            <Icon name="distance" size={16} className="ml-2 text-muted" />
+            <Text className="text-base text-muted">{distance}</Text>
+          </>
+        )}
+      </View>
+
+      <Text className="text-base leading-6 text-foreground">{listing.description}</Text>
 
       <Button
         variant="secondary"
+        icon="share"
         onPress={() => {
           void Share.share({
             message: t('listing.detail.shareMessage', {
@@ -142,9 +152,13 @@ export function ListingDetailScreen() {
       ) : null}
 
       {booking.isSuccess ? (
-        <Text className="text-center text-sm text-muted" accessibilityLiveRegion="polite">
-          {t('listing.detail.bookSuccess')}
-        </Text>
+        <View
+          className="flex-row items-center justify-center gap-2 rounded-card bg-status-published-surface px-4 py-3"
+          accessibilityLiveRegion="polite"
+        >
+          <Icon name="accepted" size={18} className="text-status-published" />
+          <Text className="text-sm text-status-published">{t('listing.detail.bookSuccess')}</Text>
+        </View>
       ) : null}
 
       {booking.isError ? (
