@@ -12,9 +12,9 @@
  * `View` de fuera es la ranura que mide `getItemLayout`, y la `Pressable` de dentro es lo
  * que se ve. Separarlas es lo que permite maquetar sin mentirle a la lista.
  *
- * SIN FOTO, y no por gusto: `listingSearchItemSchema` del backend no manda imágenes. En
- * cuanto las mande, aquí entra `expo-image` con `cachePolicy: "memory-disk"` y blurhash.
- * Punto 4 de `docs/contract-delta.md`.
+ * SIN FOTO, y no por gusto: `listingSearchItemSchema` del backend no manda imágenes. El
+ * día que las mande hará falta una librería de imagen con caché en disco, que hoy no está
+ * instalada porque no había nada que pintar. Punto 4 de `docs/contract-delta.md`.
  */
 import type { Listing } from '@cerca/contract';
 import { memo } from 'react';
