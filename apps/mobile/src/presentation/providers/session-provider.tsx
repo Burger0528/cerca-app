@@ -6,7 +6,7 @@
  */
 import type { SignInRequest, SignUpRequest } from '@cerca/contract';
 import { useQueryClient } from '@tanstack/react-query';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import * as sessionUseCases from '../../application/session/use-cases';
@@ -14,6 +14,7 @@ import { HttpError } from '../../domain/errors/app-error';
 import type { SessionState } from '../../domain/session/session';
 import { RESTORING, SIGNED_OUT } from '../../domain/session/session';
 
+import { createRequiredContext } from './create-required-context';
 import { useServices } from './services-provider';
 
 interface SessionContextValue {
@@ -24,7 +25,9 @@ interface SessionContextValue {
   signOut(): Promise<void>;
 }
 
-const SessionContext = createContext<SessionContextValue | null>(null);
+const [SessionContext, useSession] = createRequiredContext<SessionContextValue>('useSession()');
+
+export { useSession };
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const services = useServices();
@@ -132,12 +135,4 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
-}
-
-export function useSession(): SessionContextValue {
-  const session = useContext(SessionContext);
-  if (session === null) {
-    throw new Error('useSession() fuera de <SessionProvider>. Falta montar el provider.');
-  }
-  return session;
 }

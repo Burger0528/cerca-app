@@ -6,10 +6,10 @@
  *   permiso denegado   → selector de ciudad
  *   ciudad elegida     → coordenadas de la ciudad, y a buscar igual
  */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import type { OriginBlocker } from '../../application/location/resolve-origin';
+import type { OriginBlocker, OriginResolution } from '../../application/location/resolve-origin';
 import {
   requestDeviceOrigin,
   resolveDeviceOrigin,
@@ -17,6 +17,7 @@ import {
 import type { City, SearchOrigin } from '../../domain/location/location';
 import { NO_ORIGIN } from '../../domain/location/location';
 
+import { createRequiredContext } from './create-required-context';
 import { useServices } from './services-provider';
 
 interface SearchOriginContextValue {
@@ -33,13 +34,29 @@ interface SearchOriginContextValue {
   openSystemSettings(): Promise<void>;
 }
 
-const SearchOriginContext = createContext<SearchOriginContextValue | null>(null);
+const [SearchOriginContext, useSearchOrigin] =
+  createRequiredContext<SearchOriginContextValue>('useSearchOrigin()');
+
+export { useSearchOrigin };
 
 export function SearchOriginProvider({ children }: { children: ReactNode }) {
   const services = useServices();
   const [origin, setOrigin] = useState<SearchOrigin>(NO_ORIGIN);
   const [blocker, setBlocker] = useState<OriginBlocker | null>(null);
   const [isResolving, setIsResolving] = useState(true);
+
+  /**
+   * Los dos caminos —mirar el permiso al arrancar y pedirlo desde el botón— terminan en la
+   * misma decisión, así que la decisión vive una sola vez.
+   */
+  const applyResolution = useCallback((resolution: OriginResolution) => {
+    if (resolution.kind === 'resolved') {
+      setOrigin(resolution.origin);
+      setBlocker(null);
+    } else {
+      setBlocker(resolution.reason);
+    }
+  }, []);
 
   // Al arrancar solo se MIRA el permiso, no se pide. Si ya estaba concedido de una sesión
   // anterior, la ubicación aparece sola y el usuario no ve ningún diálogo.
@@ -48,13 +65,7 @@ export function SearchOriginProvider({ children }: { children: ReactNode }) {
 
     resolveDeviceOrigin(services.location)
       .then((resolution) => {
-        if (cancelled) return;
-        if (resolution.kind === 'resolved') {
-          setOrigin(resolution.origin);
-          setBlocker(null);
-        } else {
-          setBlocker(resolution.reason);
-        }
+        if (!cancelled) applyResolution(resolution);
       })
       .catch(() => {
         if (!cancelled) setBlocker('position-unavailable');
@@ -66,22 +77,16 @@ export function SearchOriginProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [services.location]);
+  }, [services.location, applyResolution]);
 
   const requestDeviceLocation = useCallback(async () => {
     setIsResolving(true);
     try {
-      const resolution = await requestDeviceOrigin(services.location);
-      if (resolution.kind === 'resolved') {
-        setOrigin(resolution.origin);
-        setBlocker(null);
-      } else {
-        setBlocker(resolution.reason);
-      }
+      applyResolution(await requestDeviceOrigin(services.location));
     } finally {
       setIsResolving(false);
     }
-  }, [services.location]);
+  }, [services.location, applyResolution]);
 
   const chooseCity = useCallback((city: City) => {
     setOrigin({ kind: 'city', city });
@@ -100,12 +105,4 @@ export function SearchOriginProvider({ children }: { children: ReactNode }) {
   );
 
   return <SearchOriginContext.Provider value={value}>{children}</SearchOriginContext.Provider>;
-}
-
-export function useSearchOrigin(): SearchOriginContextValue {
-  const value = useContext(SearchOriginContext);
-  if (value === null) {
-    throw new Error('useSearchOrigin() fuera de <SearchOriginProvider>.');
-  }
-  return value;
 }
