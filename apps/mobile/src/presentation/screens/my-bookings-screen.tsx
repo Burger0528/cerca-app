@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHasCapacity } from '../auth/use-can';
 import { BookingRow } from '../components/booking-row';
 import { Chip } from '../components/chip';
+import { Icon } from '../components/icon';
 import { useMyBookings } from '../hooks/use-my-bookings';
 import { messageKeyForError } from '../i18n/error-message-key';
 
@@ -57,6 +58,7 @@ export function MyBookingsScreen() {
 
       {bookings.isError ? (
         <View className="flex-1 items-center justify-center gap-4 px-8">
+          <Icon name="error" size={48} className="text-muted" />
           <Text className="text-center text-base text-muted">
             {t(messageKeyForError(bookings.error))}
           </Text>
@@ -65,6 +67,7 @@ export function MyBookingsScreen() {
 
       {!bookings.isPending && !bookings.isError && bookings.bookings.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-2 px-8">
+          <Icon name="empty" size={48} className="mb-2 text-muted" />
           <Text className="text-center text-lg font-semibold text-foreground">
             {t('bookings.empty.title')}
           </Text>

@@ -37,6 +37,7 @@ import {
 } from '../../domain/errors/app-error';
 import { Button } from '../components/button';
 import { FiltersModal } from '../components/filters-modal';
+import { Icon } from '../components/icon';
 import { ListingCard, listingCardHeight } from '../components/listing-card';
 import { ListingListSkeleton } from '../components/listing-card-skeleton';
 import { useCategories } from '../hooks/use-categories';
@@ -130,19 +131,25 @@ export function SearchScreen() {
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
       <View className="gap-3 px-4 py-3">
-        <TextInput
-          className="min-h-touch rounded-xl border border-subtle px-4 text-base text-foreground placeholder:text-muted"
-          placeholder={t('search.placeholder')}
-          value={query}
-          onChangeText={setQuery}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="search"
-          accessibilityLabel={t('search.placeholder')}
-        />
+        {/* La lupa vive en la caja, no dentro del `TextInput`: RN no tiene `startAdornment`,
+            y un icono absoluto encima del campo se come el área táctil del cursor. */}
+        <View className="min-h-touch flex-row items-center gap-2 rounded-xl border border-subtle bg-surface-raised px-4">
+          <Icon name="search" size={20} className="text-muted" />
+
+          <TextInput
+            className="flex-1 text-base text-foreground placeholder:text-muted"
+            placeholder={t('search.placeholder')}
+            value={query}
+            onChangeText={setQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+            returnKeyType="search"
+            accessibilityLabel={t('search.placeholder')}
+          />
+        </View>
 
         <View className="flex-row items-center justify-between">
-          <Button variant="secondary" onPress={() => setFiltersOpen(true)}>
+          <Button variant="secondary" icon="filter" onPress={() => setFiltersOpen(true)}>
             {filtersAreActive
               ? t('search.filters.activeCount', { count: activeFilterCount(filters) })
               : t('search.filters.open')}
@@ -162,6 +169,7 @@ export function SearchScreen() {
       {/* ESTADO 2 · error, en lenguaje llano y con reintento que de verdad reintenta. */}
       {search.isError ? (
         <View className="flex-1 items-center justify-center gap-4 px-8">
+          <Icon name="error" size={48} className="text-muted" />
           <Text className="text-center text-base text-muted">{t(messageKeyFor(search.error))}</Text>
           <Button variant="secondary" onPress={() => void search.refetch()}>
             {t('common.retry')}
@@ -172,6 +180,7 @@ export function SearchScreen() {
       {/* ESTADOS 3 y 4 · los dos vacíos, con salidas distintas. */}
       {isEmpty ? (
         <View className="flex-1 items-center justify-center gap-2 px-8">
+          <Icon name="empty" size={48} className="mb-2 text-muted" />
           <Text className="text-center text-lg font-semibold text-foreground">
             {filtersAreActive ? t('search.empty.filtered.title') : t('search.empty.initial.title')}
           </Text>

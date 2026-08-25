@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SUPPORTED_LANGUAGES } from '../../domain/preferences/language';
 import { useHasCapacity } from '../auth/use-can';
 import { Button } from '../components/button';
+import { Icon } from '../components/icon';
 import { useLanguage } from '../hooks/use-language';
 import { messageKeyForError } from '../i18n/error-message-key';
 import { useSession } from '../providers/session-provider';
@@ -44,10 +45,13 @@ export function AccountScreen() {
           </Text>
         ) : null}
 
-        <View className="gap-3 rounded-card border border-subtle p-4">
-          <Text className="text-lg font-semibold text-foreground">
-            {t('account.language.title')}
-          </Text>
+        <View className="gap-3 rounded-card border border-subtle bg-surface-raised p-4">
+          <View className="flex-row items-center gap-2">
+            <Icon name="language" size={20} className="text-muted" />
+            <Text className="text-lg font-semibold text-foreground">
+              {t('account.language.title')}
+            </Text>
+          </View>
 
           {/* Cada idioma se nombra EN SU IDIOMA: quien abre esto para salir del inglés no
               necesita saber inglés para encontrar la salida. */}
@@ -65,7 +69,7 @@ export function AccountScreen() {
           </View>
         </View>
 
-        <Button variant="secondary" onPress={() => void signOut()}>
+        <Button variant="secondary" icon="signOut" onPress={() => void signOut()}>
           {t('session.signOut')}
         </Button>
       </ScrollView>

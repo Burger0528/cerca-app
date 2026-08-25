@@ -2,7 +2,22 @@ import { Redirect, Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useCan, useHasCapacity } from '../../presentation/auth/use-can';
+import { Icon } from '../../presentation/components/icon';
+import type { IconName } from '../../presentation/components/icon';
 import { useSession } from '../../presentation/providers/session-provider';
+
+/**
+ * El icono de una pestaña, atenuado cuando no está activa.
+ *
+ * Va como función suelta y no en línea: `tabBarIcon` recibe `{ focused }` y devolver un
+ * componente nuevo en cada render dentro del JSX hace que React lo remonte en cada cambio
+ * de pestaña.
+ */
+function tabIcon(name: IconName) {
+  return function TabIcon({ focused }: { focused: boolean }) {
+    return <Icon name={name} size={24} className={focused ? 'text-brand' : 'text-muted'} />;
+  };
+}
 
 /**
  * Guarda del grupo privado.
@@ -26,22 +41,44 @@ export default function AppLayout() {
   }
 
   return (
-    // Sin `tabBarIcon` la barra pinta un glifo de relleno que en Android sale como caja
-    // vacía. La app no usa librería de iconos: las pestañas se distinguen por su texto.
-    <Tabs screenOptions={{ headerShown: false, tabBarIcon: () => null }}>
-      <Tabs.Screen name="index" options={{ title: t('search.tabTitle') }} />
-      <Tabs.Screen name="bookings" options={{ title: t('bookings.title') }} />
+    <Tabs
+      // El color activo lo pone el `ThemeProvider` del layout raíz; aquí solo se ajusta el
+      // peso de la etiqueta para que no compita con el icono.
+      screenOptions={{
+        headerShown: false,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{ title: t('search.tabTitle'), tabBarIcon: tabIcon('search') }}
+      />
+      <Tabs.Screen
+        name="bookings"
+        options={{ title: t('bookings.title'), tabBarIcon: tabIcon('bookings') }}
+      />
       <Tabs.Screen
         name="(provider)"
-        options={{ title: t('provider.tabTitle'), href: isProvider ? undefined : null }}
+        options={{
+          title: t('provider.tabTitle'),
+          href: isProvider ? undefined : null,
+          tabBarIcon: tabIcon('listings'),
+        }}
       />
       <Tabs.Screen
         name="(moderation)"
-        options={{ title: t('moderation.tabTitle'), href: isModerator ? undefined : null }}
+        options={{
+          title: t('moderation.tabTitle'),
+          href: isModerator ? undefined : null,
+          tabBarIcon: tabIcon('moderation'),
+        }}
       />
       {/* El detalle conserva la barra de pestañas pero no ES una pestaña. */}
       <Tabs.Screen name="listings" options={{ href: null }} />
-      <Tabs.Screen name="account" options={{ title: t('account.tabTitle') }} />
+      <Tabs.Screen
+        name="account"
+        options={{ title: t('account.tabTitle'), tabBarIcon: tabIcon('account') }}
+      />
     </Tabs>
   );
 }

@@ -30,14 +30,17 @@ import {
   NetworkError,
   TimeoutError,
 } from '../../domain/errors/app-error';
-import { useActor } from '../auth/use-can';
+import { useActor, useCan } from '../auth/use-can';
 import { Button } from '../components/button';
+import { Icon } from '../components/icon';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
+import { ReportListing } from '../components/report-listing';
 import { ReviewRow } from '../components/review-row';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
+import { useModerateReview } from '../hooks/use-moderate-review';
 import { useRequestBooking } from '../hooks/use-request-booking';
 import type { FeedbackMessageKey } from '../i18n/message-keys';
 
@@ -52,11 +55,26 @@ export function ListingDetailScreen() {
   const actor = useActor();
   const booking = useRequestBooking();
   const reviews = useListingReviews(id);
+  const canModerateReviews = useCan('review:moderate');
+  const moderateReview = useModerateReview(id);
+
+  const { mutate: moderate } = moderateReview;
+  const removeReview = useCallback(
+    (reviewId: string) => moderate({ reviewId, action: 'remove' }),
+    [moderate],
+  );
 
   const keyExtractor = useCallback((review: ReviewResponse) => review.id, []);
   const renderReview = useCallback(
-    ({ item }: { item: ReviewResponse }) => <ReviewRow review={item} />,
-    [],
+    ({ item }: { item: ReviewResponse }) => (
+      <ReviewRow
+        review={item}
+        // Sin permiso no llega la prop, así que la fila no puede ni pintar el botón.
+        onRemove={canModerateReviews ? removeReview : undefined}
+        isRemoving={moderateReview.isPending && moderateReview.variables?.reviewId === item.id}
+      />
+    ),
+    [canModerateReviews, removeReview, moderateReview.isPending, moderateReview.variables],
   );
 
   if (detail.isPending) {
@@ -109,14 +127,23 @@ export function ListingDetailScreen() {
 
       <Text className="text-2xl font-bold text-foreground">{price}</Text>
 
-      <Text className="text-base text-muted">
-        {distance === null ? rating : `${rating} · ${distance}`}
-      </Text>
+      <View className="flex-row items-center gap-1">
+        <Icon name="rating" size={16} className="text-muted" />
+        <Text className="text-base text-muted">{rating}</Text>
 
-      <Text className="text-base text-foreground">{listing.description}</Text>
+        {distance === null ? null : (
+          <>
+            <Icon name="distance" size={16} className="ml-2 text-muted" />
+            <Text className="text-base text-muted">{distance}</Text>
+          </>
+        )}
+      </View>
+
+      <Text className="text-base leading-6 text-foreground">{listing.description}</Text>
 
       <Button
         variant="secondary"
+        icon="share"
         onPress={() => {
           void Share.share({
             message: t('listing.detail.shareMessage', {
@@ -139,12 +166,18 @@ export function ListingDetailScreen() {
 
       {isOwnListing ? (
         <Text className="text-center text-sm text-muted">{t('listing.detail.bookOwnListing')}</Text>
-      ) : null}
+      ) : (
+        <ReportListing listingId={listing.id} />
+      )}
 
       {booking.isSuccess ? (
-        <Text className="text-center text-sm text-muted" accessibilityLiveRegion="polite">
-          {t('listing.detail.bookSuccess')}
-        </Text>
+        <View
+          className="flex-row items-center justify-center gap-2 rounded-card bg-status-published-surface px-4 py-3"
+          accessibilityLiveRegion="polite"
+        >
+          <Icon name="accepted" size={18} className="text-status-published" />
+          <Text className="text-sm text-status-published">{t('listing.detail.bookSuccess')}</Text>
+        </View>
       ) : null}
 
       {booking.isError ? (

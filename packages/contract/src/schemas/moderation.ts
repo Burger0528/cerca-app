@@ -15,6 +15,28 @@ export const reportSchema = z.object({
 
 export type Report = z.infer<typeof reportSchema>;
 
+/**
+ * Denunciar un anuncio.
+ *
+ * Los límites son los del backend (`CreateReportDto`: min 3, max 500), copiados a
+ * propósito: así el usuario ve el error mientras escribe y no después de un 400.
+ */
+export const createReportSchema = z
+  .object({
+    reason: z.string().min(3).max(500),
+  })
+  .strict();
+
+export type CreateReportRequest = z.infer<typeof createReportSchema>;
+
+/**
+ * Motivos que ofrece la app. El backend acepta texto libre; estos son la parte fija que se
+ * antepone al detalle, para que la cola del moderador se lea de un vistazo.
+ */
+export const REPORT_REASONS = ['spam', 'misleading', 'inappropriate', 'other'] as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[number];
+
 export const REPORT_RESOLUTIONS = ['remove', 'dismiss'] as const;
 
 export type ReportResolution = (typeof REPORT_RESOLUTIONS)[number];

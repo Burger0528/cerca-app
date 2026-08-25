@@ -6,6 +6,10 @@
  *
  * La fecha va porque `GET /bookings` no manda el título del anuncio (ver `contract-delta`):
  * sin ella, tres solicitudes seguidas son tres filas idénticas.
+ *
+ * El icono y su color salen del estado. Es redundante con el texto A PROPÓSITO: el color
+ * solo nunca puede ser el único portador de un significado, y el icono da la lectura rápida
+ * a quien recorre la lista sin leerla.
  */
 import type { BookingResponse } from '@cerca/contract';
 import { useRouter } from 'expo-router';
@@ -14,6 +18,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { useLocale } from '../hooks/use-locale';
+
+import { BOOKING_STATUS_STYLE } from './booking-status-style';
+import { Icon } from './icon';
 
 export interface BookingRowProps {
   readonly booking: BookingResponse;
@@ -42,20 +49,27 @@ function BookingRowComponent({ booking, role }: BookingRowProps) {
   const roleLabel =
     role === 'customer' ? t('bookings.row.asCustomer') : t('bookings.row.asProvider');
   const requestedAt = dateFormatterFor(locale).format(new Date(booking.requestedAt));
+  const style = BOOKING_STATUS_STYLE[booking.status];
 
   return (
-    <Pressable
-      className="min-h-touch gap-1 border-b border-subtle bg-surface px-4 py-3 active:bg-surface-raised"
-      accessibilityRole="button"
-      accessibilityLabel={t('bookings.a11y.row', { status, role: roleLabel, date: requestedAt })}
-      onPress={() => router.push(`/bookings/${booking.id}`)}
-    >
-      <View>
-        <Text className="text-base font-semibold text-foreground">{status}</Text>
-        <Text className="text-sm text-muted">{roleLabel}</Text>
-        <Text className="text-sm text-muted">{requestedAt}</Text>
-      </View>
-    </Pressable>
+    <View className="px-4 pb-3">
+      <Pressable
+        className="min-h-touch flex-row items-center gap-3 rounded-card border border-subtle bg-surface-raised px-4 py-3 active:bg-surface-sunken"
+        accessibilityRole="button"
+        accessibilityLabel={t('bookings.a11y.row', { status, role: roleLabel, date: requestedAt })}
+        onPress={() => router.push(`/bookings/${booking.id}`)}
+      >
+        <Icon name={style.icon} size={28} className={style.color} />
+
+        <View className="flex-1">
+          <Text className={`text-base font-semibold ${style.color}`}>{status}</Text>
+          <Text className="text-sm text-muted">{roleLabel}</Text>
+          <Text className="text-sm text-muted">{requestedAt}</Text>
+        </View>
+
+        <Icon name="chevron" size={20} className="text-muted" />
+      </Pressable>
+    </View>
   );
 }
 

@@ -14,6 +14,11 @@ import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 import { cn } from './cn';
+import { Icon } from './icon';
+import type { IconName } from './icon';
+
+/** El icono hereda el color de la etiqueta: mismo `label()`, misma variante, un solo sitio. */
+const ICON_SIZE = 18;
 
 const button = cva(
   // `min-h-touch` son los 44 pt de área táctil mínima (HIG y Material), definidos en
@@ -80,6 +85,12 @@ export interface ButtonProps extends VariantProps<typeof button> {
 
   /** Para cuando el texto visible no basta: un icono o una abreviatura, como la X del modal. */
   readonly accessibilityLabel?: string;
+
+  /**
+   * Icono a la izquierda de la etiqueta. Acompaña al texto, nunca lo sustituye: un botón
+   * que solo es un símbolo obliga a adivinar, y el lector de pantalla no tiene qué leer.
+   */
+  readonly icon?: IconName;
 }
 
 export function Button({
@@ -90,6 +101,7 @@ export function Button({
   isDisabled = false,
   className,
   accessibilityLabel,
+  icon,
 }: ButtonProps) {
   // Dos entradas distintas para quien llama, un solo estado para el pulsado. Unificarlas cierra
   // el doble envío: sin esto, un segundo toque con la petición en vuelo la manda otra vez.
@@ -111,6 +123,11 @@ export function Button({
     >
       {/* Oculto al lector: `busy` ya lo dice, y anunciarlo dos veces retrasa la etiqueta. */}
       {isLoading ? <ActivityIndicator accessibilityElementsHidden /> : null}
+
+      {/* El icono cede el sitio al indicador: los dos a la vez son dos cosas girando. */}
+      {icon !== undefined && !isLoading ? (
+        <Icon name={icon} size={ICON_SIZE} className={label({ variant })} />
+      ) : null}
 
       <Text
         className={cn(label({ variant }), 'py-3')}
