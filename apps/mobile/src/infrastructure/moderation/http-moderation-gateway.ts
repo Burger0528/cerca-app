@@ -1,5 +1,6 @@
 import { cursorPageSchema, reportSchema } from '@cerca/contract';
 import type {
+  CreateReportRequest,
   CursorPage,
   ModerateListingRequest,
   ModerateReviewRequest,
@@ -14,6 +15,14 @@ const reportPageSchema = cursorPageSchema(reportSchema);
 
 export function createHttpModerationGateway(http: HttpClient): ModerationGatewayPort {
   return {
+    createReport(listingId: string, request: CreateReportRequest): Promise<void> {
+      return http.requestVoid({
+        path: `/listings/${listingId}/report`,
+        method: 'POST',
+        body: request,
+      });
+    },
+
     listReports(cursor: string | null, signal?: AbortSignal): Promise<CursorPage<Report>> {
       return http.request({ path: '/reports', query: { cursor }, signal }, reportPageSchema);
     },

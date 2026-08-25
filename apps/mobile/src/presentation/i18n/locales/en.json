@@ -137,6 +137,9 @@
       "a11y": {
         "row": "Report: {{reason}}. {{status}}."
       }
+    },
+    "review": {
+      "remove": "Remove review"
     }
   },
   "search": {
@@ -207,6 +210,19 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. {{distance}} away."
+    },
+    "report": {
+      "open": "Report listing",
+      "title": "What's wrong with this listing?",
+      "reason": {
+        "spam": "Spam",
+        "misleading": "Misleading information",
+        "inappropriate": "Inappropriate content",
+        "other": "Something else"
+      },
+      "detailPlaceholder": "Tell us more (optional)",
+      "submit": "Send report",
+      "success": "Thanks. A moderator will take a look."
     }
   },
   "bookings": {

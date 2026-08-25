@@ -137,6 +137,9 @@
       "a11y": {
         "row": "Denuncia: {{reason}}. {{status}}."
       }
+    },
+    "review": {
+      "remove": "Retirar reseña"
     }
   },
   "search": {
@@ -207,6 +210,19 @@
     },
     "a11y": {
       "card": "{{title}}. {{price}}. {{rating}}. A {{distance}}."
+    },
+    "report": {
+      "open": "Denunciar anuncio",
+      "title": "¿Qué problema tiene este anuncio?",
+      "reason": {
+        "spam": "Spam",
+        "misleading": "Información engañosa",
+        "inappropriate": "Contenido inapropiado",
+        "other": "Otro motivo"
+      },
+      "detailPlaceholder": "Cuéntanos más (opcional)",
+      "submit": "Enviar denuncia",
+      "success": "Gracias. Un moderador la revisará."
     }
   },
   "bookings": {

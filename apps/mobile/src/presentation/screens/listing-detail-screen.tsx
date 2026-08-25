@@ -30,15 +30,17 @@ import {
   NetworkError,
   TimeoutError,
 } from '../../domain/errors/app-error';
-import { useActor } from '../auth/use-can';
+import { useActor, useCan } from '../auth/use-can';
 import { Button } from '../components/button';
 import { Icon } from '../components/icon';
 import { pricingLabel, ratingLabel } from '../components/listing-labels';
+import { ReportListing } from '../components/report-listing';
 import { ReviewRow } from '../components/review-row';
 import { StatusBadge } from '../components/status-badge';
 import { useListingDetail } from '../hooks/use-edit-listing';
 import { useListingReviews } from '../hooks/use-listing-reviews';
 import { useLocale } from '../hooks/use-locale';
+import { useModerateReview } from '../hooks/use-moderate-review';
 import { useRequestBooking } from '../hooks/use-request-booking';
 import type { FeedbackMessageKey } from '../i18n/message-keys';
 
@@ -53,11 +55,26 @@ export function ListingDetailScreen() {
   const actor = useActor();
   const booking = useRequestBooking();
   const reviews = useListingReviews(id);
+  const canModerateReviews = useCan('review:moderate');
+  const moderateReview = useModerateReview(id);
+
+  const { mutate: moderate } = moderateReview;
+  const removeReview = useCallback(
+    (reviewId: string) => moderate({ reviewId, action: 'remove' }),
+    [moderate],
+  );
 
   const keyExtractor = useCallback((review: ReviewResponse) => review.id, []);
   const renderReview = useCallback(
-    ({ item }: { item: ReviewResponse }) => <ReviewRow review={item} />,
-    [],
+    ({ item }: { item: ReviewResponse }) => (
+      <ReviewRow
+        review={item}
+        // Sin permiso no llega la prop, así que la fila no puede ni pintar el botón.
+        onRemove={canModerateReviews ? removeReview : undefined}
+        isRemoving={moderateReview.isPending && moderateReview.variables?.reviewId === item.id}
+      />
+    ),
+    [canModerateReviews, removeReview, moderateReview.isPending, moderateReview.variables],
   );
 
   if (detail.isPending) {
@@ -149,7 +166,9 @@ export function ListingDetailScreen() {
 
       {isOwnListing ? (
         <Text className="text-center text-sm text-muted">{t('listing.detail.bookOwnListing')}</Text>
-      ) : null}
+      ) : (
+        <ReportListing listingId={listing.id} />
+      )}
 
       {booking.isSuccess ? (
         <View
